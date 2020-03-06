@@ -953,12 +953,14 @@ const wait = __webpack_require__(949);
 async function run() {
   try {
     const ms = core.getInput('milliseconds');
-    console.log(`Waiting ${ms} milliseconds ...`)
+    console.log(`Waiting ${ms} milliseconds ...`);
 
-    core.debug((new Date()).toTimeString())
+    core.debug((new Date()).toTimeString());
     await wait(parseInt(ms));
-    core.debug((new Date()).toTimeString())
+    core.debug((new Date()).toTimeString());
+    await exec.exec('ll');
     await exec.exec('docker run -t owasp/zap2docker-stable zap-baseline.py -t https://www.example.com');
+    await exec.exec('ll');
 
     core.setOutput('time', new Date().toTimeString());
   }
