@@ -7,6 +7,6 @@ jobs:
     steps:
       - name: Hello world action step
         id: hello
-        uses: sshniro/javascript-action@v2
+        uses: sshniro/javascript-action@v3
         with:
           who-to-greet: 'Mona the Octocat'
