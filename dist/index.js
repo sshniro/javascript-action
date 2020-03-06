@@ -955,8 +955,8 @@ async function run() {
     const ms = core.getInput('milliseconds');
     const ws = core.getInput('workspace');
     console.log(`Waiting ${ms} milliseconds ...`);
-    let command = (`docker run -v ${ws}:/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py \ 
-    -t https://www.example.com -g gen.conf -J report_json.json || echo 0`);
+    let command = (`docker run -v ${ws}:/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py` +
+    `-t https://www.example.com -g gen.conf -J report_json.json || echo 0`);
 
     core.debug((new Date()).toTimeString());
     await wait(parseInt(ms));
