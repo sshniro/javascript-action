@@ -1,25 +1,12 @@
-name: "units-test"
-on:
-  pull_request:
-  push:
-    branches:
-      - master
-      - 'releases/*'
+on: [push]
 
 jobs:
-  # unit tests
-  units:
+  hello_world_job:
     runs-on: ubuntu-latest
+    name: A job to say hello
     steps:
-    - uses: actions/checkout@v1
-    - run: npm ci
-    - run: npm test
-
-  # test action works running from the graph  
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - uses: ./
-      with:
-        milliseconds: 1000
+      - name: Hello world action step
+        id: hello
+        uses: sshniro/javascript-action@v2
+        with:
+          who-to-greet: 'Mona the Octocat'
