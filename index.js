@@ -12,9 +12,9 @@ async function run() {
     core.debug((new Date()).toTimeString());
     await wait(parseInt(ms));
     core.debug((new Date()).toTimeString());
-    await exec.exec('ll');
+    await exec.exec('pwd');
     await exec.exec('docker run -t owasp/zap2docker-stable zap-baseline.py -t https://www.example.com');
-    await exec.exec('ll');
+    await exec.exec('pwd');
 
     core.setOutput('time', new Date().toTimeString());
   }
@@ -23,4 +23,4 @@ async function run() {
   }
 }
 
-run()
+run();
