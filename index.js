@@ -7,7 +7,8 @@ const wait = require('./wait');
 async function run() {
   try {
     const ms = core.getInput('milliseconds');
-    console.log(`Waiting ${ms} milliseconds ...`);
+    const ws = core.getInput('workspace');
+    console.log('workspace is: ' + ws);
 
     core.debug((new Date()).toTimeString());
     await wait(parseInt(ms));
