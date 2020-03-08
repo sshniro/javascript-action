@@ -957,7 +957,7 @@ async function run() {
   try {
     const ms = core.getInput('milliseconds');
     const wd = core.getInput('workspace');
-    let testPath = '/home/nirojan/za/javascript-action'
+    // let wd = '/home/nirojan/za/javascript-action'
     // let runner = JSON.parse(process.env.RUNNER || "");
     // console.log(runner)
     // const outputDir = path.join(runner.temp, "nb-runner");
@@ -978,6 +978,7 @@ async function run() {
     };
     options.cwd = './lib';
     options.failOnStdErr = false;
+    options.silent = true;
 
     // let path = '/home/nirojan/za/javascript-action'
     let command = (`docker run --user root -v ${wd}:/zap/wrk/:rw \
@@ -998,12 +999,12 @@ async function run() {
       console.log(result)
     }
     catch(err) {
-      document.getElementById("demo").innerHTML = err.message;
+      console.log('err occurred');
     }finally {
       // process python script
-
+      console.log('finally');
     }
-    await exec.exec('cat report_json.json');
+    await exec.exec(`cat ${wd}/report_json.json`);
     fs.writeFileSync(executeScriptPath, pythonCode);
     core.setOutput('time', new Date().toTimeString());
   }
