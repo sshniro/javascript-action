@@ -13,3 +13,6 @@ jobs:
         with:
           who-to-greet: 'Mona the Octocat'
           workspace: ${{ github.workspace }}
+      - name: read File
+        run: pwd && ls -l /zap/wrk/
+      - run: ls -l
