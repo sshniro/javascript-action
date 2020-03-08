@@ -1939,6 +1939,9 @@ async function run() {
     let zapWorkDir = core.getInput('zap_word_dir');
     let branch = core.getInput('branch');
     let reportName = core.getInput('report_name');
+    let zap_config_file_name = core.getInput('zap_conf_file_name');
+    let docker_name = core.getInput('docker_name');
+    let target = core.getInput('target');
 
     console.log('workspace' + workspace);
     console.log('token' + token);
@@ -1947,36 +1950,19 @@ async function run() {
     console.log('branch' + branch);
     console.log('report_name' + reportName);
 
-    fs.writeFileSync(wd + '/niro.txt', 'hwllo worl');
-
-    let myOutput = '';
-    let myError = '';
+    // fs.writeFileSync(wd + '/niro.txt', 'hwllo worl');
 
     const options = {};
-    options.listeners = {
-      stdout: (data) => {
-        myOutput += data.toString();
-      },
-      stderr: (data) => {
-        myError += data.toString();
-      }
-    };
-    options.cwd = './lib';
     options.failOnStdErr = false;
     options.silent = true;
 
     // let path = '/home/nirojan/za/javascript-action'
-    let command = (`docker run --user root -v ${wd}:/zap/wrk/:rw \
-    -t owasp/zap2docker-stable zap-baseline.py -t https://www.example.com -g gen.conf -J report_json.json || echo 0`);
+    let command = (`docker run --user root -v ${workspace}:/zap/wrk/:rw \
+    -t ${docker_name} zap-baseline.py -t ${target} -g gen.conf -J ${reportName} || echo 0`);
 
-    // Execute notebook
-    const pythonCode = `
-      import papermill as pm
-      import os
-      import json
-      `;
+    let result = await exec.exec(command);
 
-    fs.writeFileSync('Dockerfile', pythonCode);
+    // fs.writeFileSync('Dockerfile', pythonCode);
     await exec.exec('ls -l');
 
     try {
