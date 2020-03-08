@@ -42,8 +42,8 @@ async function run() {
     catch(err) {
       console.log(err);
     }
-    compute(token, repoName, workspace, zap_config_file_name, branch, reportName, zapWorkDir);
-    await exec.exec(`cat ${workspace}/report_json.json`);
+    // compute(token, repoName, workspace, zap_config_file_name, branch, reportName, zapWorkDir);
+    // await exec.exec(`cat ${workspace}/report_json.json`);
     core.setOutput('time', new Date().toTimeString());
   }
   catch (error) {
@@ -55,6 +55,9 @@ run();
 
 
 function createMessage(sites) {
+
+  console.log('starting to create the message')
+
   const NXT_LINE = '\n';
   const TAB = "\t";
   const BULLET = "-";

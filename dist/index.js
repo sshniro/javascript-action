@@ -1957,8 +1957,8 @@ async function run() {
     catch(err) {
       console.log(err);
     }
-    compute(token, repoName, workspace, zap_config_file_name, branch, reportName, zapWorkDir);
-    await exec.exec(`cat ${workspace}/report_json.json`);
+    // compute(token, repoName, workspace, zap_config_file_name, branch, reportName, zapWorkDir);
+    // await exec.exec(`cat ${workspace}/report_json.json`);
     core.setOutput('time', new Date().toTimeString());
   }
   catch (error) {
@@ -1970,6 +1970,9 @@ run();
 
 
 function createMessage(sites) {
+
+  console.log('starting to create the message')
+
   const NXT_LINE = '\n';
   const TAB = "\t";
   const BULLET = "-";
@@ -2021,6 +2024,9 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
     let jReportFile = fs.readFileSync(config_file_dir + "/" + report_name);
     jsonReport = JSON.parse(jReportFile);
 
+    console.log('sucessfully loaded the json file');
+    console.log(JSON.stringify(jsonReport))
+
     let alertsFound = false;
     jsonReport['site'].forEach((site) => {
       if (site['alerts'].length !== 0) {
@@ -2063,7 +2069,11 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
   }
 
   if (create_new_issue) {
+    console.log('starting to create an issue');
+
     let msg = createMessage(jsonReport['site']);
+
+    console.log('message is' + msg);
     const newIssue = await octokit.issues.create({
       owner: owner,
       repo: repo,
