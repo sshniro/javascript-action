@@ -170,14 +170,20 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
     let yamlDump = Buffer.from(yaml.safeDump(jsonReport)).toString("base64");
     // fs.writeFileSync(`${config_file_dir}/${zapPath}/${config_file_name}`, yamlDump);
 
-    let zapFolderContents = await octokit.repos.getContents({
-      owner: owner,
-      repo: repo,
-      path: zapPath
-    });
+    let zapFolderContents = []
+    try{
+      zapFolderContents = await octokit.repos.getContents({
+        owner: owner,
+        repo: repo,
+        path: zapPath
+      });
+    }catch (e) {
+      console.log('the file is not avaiable')
+    }
 
     let zapFile = _.find(zapFolderContents.data, {name: config_file_name});
     if (zapFile) {
+      console.log('file found so updating the file')
       let result = await updateFile(owner, repo, `${zapPath}/${config_file_name}`, 'adding new zap config', (yamlDump), zapFile.sha);
     }else {
       let result = await createFile(owner, repo, `${zapPath}/${config_file_name}`, 'adding new zap config', (yamlDump));
