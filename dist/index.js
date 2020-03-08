@@ -1960,19 +1960,19 @@ async function run() {
     let command = (`docker run --user root -v ${workspace}:/zap/wrk/:rw \
     -t ${docker_name} zap-baseline.py -t ${target} -g gen.conf -J ${reportName} || echo 0`);
 
-    let result = await exec.exec(command);
+
 
     // fs.writeFileSync('Dockerfile', pythonCode);
     await exec.exec('ls -l');
 
     try {
-      let result = await exec.exec(command);
+      let result = await exec.exec(command, options);
+      // let result = await exec.exec(command);
       console.log(result)
     }
     catch(err) {
       console.log('err occurred');
     }finally {
-      // process python script
       console.log('finally');
     }
     await exec.exec(`cat ${wd}/report_json.json`);
