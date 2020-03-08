@@ -16,7 +16,7 @@ jobs:
           token: ${{ secrets.GIT_TOKEN }}
           branch: 'master'
           zap_word_dir: './zap'
-          repo_name: ${{GITHUB_REPOSITORY}}
+          repo_name: ${{github.repository}}
           repo_details: 'report_json.json'
       - name: read File
         run: pwd && ls -l /zap/wrk/
