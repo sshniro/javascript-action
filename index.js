@@ -9,13 +9,11 @@ const path = require('path');
 // most @actions toolkit packages have async methods
 async function run() {
   try {
-    const ms = core.getInput('milliseconds');
     const wd = core.getInput('workspace');
+    const dockerImage = core.getInput('docker');
+    const hooks = core.getInput('hookFile');
     // let wd = '/home/nirojan/za/javascript-action'
-    // let runner = JSON.parse(process.env.RUNNER || "");
-    // console.log(runner)
-    // const outputDir = path.join(runner.temp, "nb-runner");
-    // fs.mkdirSync(testPath + '/hello');
+
     fs.writeFileSync(wd + '/niro.txt', 'hwllo worl');
 
     let myOutput = '';
@@ -59,7 +57,7 @@ async function run() {
       console.log('finally');
     }
     await exec.exec(`cat ${wd}/report_json.json`);
-    fs.writeFileSync(executeScriptPath, pythonCode);
+    // fs.writeFileSync(executeScriptPath, pythonCode);
     core.setOutput('time', new Date().toTimeString());
   }
   catch (error) {
