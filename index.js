@@ -14,7 +14,7 @@ let context;
 async function run() {
   try {
     let workspace = core.getInput('workspace');
-    let token = core.getInput('git_token');
+    let token = core.getInput('token');
     let repoName = core.getInput('repo_name');
     let zapWorkDir = core.getInput('zap_word_dir');
     let branch = core.getInput('branch');
