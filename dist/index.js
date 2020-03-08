@@ -956,7 +956,7 @@ const path = __webpack_require__(622);
 async function run() {
   try {
     const ms = core.getInput('milliseconds');
-    const path = core.getInput('workspace');
+    const wd = core.getInput('workspace');
 
     let runner = JSON.parse(process.env.RUNNER || "{}");
     const outputDir = path.join(runner.temp, "nb-runner");
@@ -979,7 +979,7 @@ async function run() {
     options.failOnStdErr = false;
 
     // let path = '/home/nirojan/za/javascript-action'
-    let command = (`docker run --user root -v ${path}:/zap/wrk/:rw \
+    let command = (`docker run --user root -v ${wd}:/zap/wrk/:rw \
     -t owasp/zap2docker-stable zap-baseline.py -t https://www.example.com -g gen.conf -J report_json.json || echo 0`);
 
     // Execute notebook
