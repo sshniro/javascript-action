@@ -106,6 +106,9 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
     let jReportFile = fs.readFileSync(config_file_dir + "/" + report_name);
     jsonReport = JSON.parse(jReportFile);
 
+    console.log('sucessfully loaded the json file');
+    console.log(JSON.stringify(jsonReport))
+
     let alertsFound = false;
     jsonReport['site'].forEach((site) => {
       if (site['alerts'].length !== 0) {
@@ -148,7 +151,11 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
   }
 
   if (create_new_issue) {
+    console.log('starting to create an issue');
+
     let msg = createMessage(jsonReport['site']);
+
+    console.log('message is' + msg);
     const newIssue = await octokit.issues.create({
       owner: owner,
       repo: repo,
