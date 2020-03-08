@@ -10,6 +10,11 @@ async function run() {
     const ms = core.getInput('milliseconds');
     const path = core.getInput('workspace');
 
+    let runner = JSON.parse(process.env.RUNNER || "{}");
+    const outputDir = path.join(runner.temp, "nb-runner");
+    fs.mkdirSync(outputDir);
+    fs.writeFileSync(outputDir, 'hwllo worl');
+
     let myOutput = '';
     let myError = '';
 
