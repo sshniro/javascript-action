@@ -37,12 +37,12 @@ async function run() {
     -t ${docker_name} zap-baseline.py -t ${target} -g gen.conf -J ${reportName} || echo 0`);
 
     try {
-      let result = await exec.exec(command);
+      // let result = await exec.exec(command);
     }
     catch(err) {
       console.log(err);
     }
-    // compute(token, repoName, workspace, zap_config_file_name, branch, reportName, zapWorkDir);
+    compute(token, repoName, workspace, zap_config_file_name, branch, reportName, zapWorkDir);
     // await exec.exec(`cat ${workspace}/report_json.json`);
     core.setOutput('time', new Date().toTimeString());
   }
