@@ -110,7 +110,7 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
     jsonReport = JSON.parse(jReportFile);
 
     console.log('sucessfully loaded the json file');
-    console.log(JSON.stringify(jsonReport))
+    // console.log(JSON.stringify(jsonReport))
 
     let alertsFound = false;
     jsonReport['site'].forEach((site) => {
