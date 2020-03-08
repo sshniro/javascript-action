@@ -14,6 +14,21 @@ async function run() {
     const hooks = core.getInput('hookFile');
     // let wd = '/home/nirojan/za/javascript-action'
 
+
+    let workspace = core.getInput('workspace');
+    let token = core.getInput('git_token');
+    let repoName = core.getInput('repo_name');
+    let zapWorkDir = core.getInput('zap_word_dir');
+    let branch = core.getInput('branch');
+    let reportName = core.getInput('report_name');
+
+    console.log('workspace' + workspace);
+    console.log('token' + token);
+    console.log('repodetails' + repoName);
+    console.log('zapWorkDir' + zapWorkDir);
+    console.log('branch' + branch);
+    console.log('report_name' + reportName);
+
     fs.writeFileSync(wd + '/niro.txt', 'hwllo worl');
 
     let myOutput = '';
