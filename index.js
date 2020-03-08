@@ -147,7 +147,7 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
     create_new_issue = true;
   }
 
-  if (!create_new_issue) {
+  if (create_new_issue) {
     let msg = createMessage(jsonReport['site']);
     const newIssue = await octokit.issues.create({
       owner: owner,
