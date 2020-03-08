@@ -948,6 +948,8 @@ const core = __webpack_require__(470);
 const exec = __webpack_require__(986);
 const wait = __webpack_require__(949);
 const fs = __webpack_require__(747);
+const path = __webpack_require__(622);
+
 
 
 // most @actions toolkit packages have async methods
