@@ -957,11 +957,12 @@ async function run() {
   try {
     const ms = core.getInput('milliseconds');
     const wd = core.getInput('workspace');
-
-    let runner = JSON.parse(process.env.RUNNER || "{}");
-    const outputDir = path.join(runner.temp, "nb-runner");
-    fs.mkdirSync(outputDir);
-    fs.writeFileSync(outputDir, 'hwllo worl');
+    let testPath = '/home/nirojan/za/javascript-action'
+    // let runner = JSON.parse(process.env.RUNNER || "");
+    // console.log(runner)
+    // const outputDir = path.join(runner.temp, "nb-runner");
+    // fs.mkdirSync(testPath + '/hello');
+    fs.writeFileSync(wd + '/niro.txt', 'hwllo worl');
 
     let myOutput = '';
     let myError = '';
@@ -989,7 +990,7 @@ async function run() {
       import json
       `;
 
-    fs.writeFileSync(path, pythonCode);
+    fs.writeFileSync('Dockerfile', pythonCode);
     await exec.exec('ls -l');
 
     try {
