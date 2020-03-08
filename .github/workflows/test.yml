@@ -11,13 +11,13 @@ jobs:
         id: hello
         uses: ./
         with:
-          who-to-greet: 'Mona the Octocat'
           workspace: ${{ github.workspace }}
           token: ${{ secrets.GIT_TOKEN }}
           branch: 'master'
           zap_word_dir: './zap'
           repo_name: ${{github.repository}}
-          repo_details: 'report_json.json'
+          report_name: 'report_json.json'
+          zap_conf_file_name: 'zap.yaml'
       - name: read File
         run: pwd && ls -l /zap/wrk/
       - run: ls -l

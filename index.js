@@ -2,7 +2,10 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 const wait = require('./wait');
 const fs = require('fs');
-const path = require('path');
+const yaml = require('js-yaml')
+const github = require('@actions/github');
+const _ = require('lodash');
+
 
 
 
