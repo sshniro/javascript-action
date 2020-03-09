@@ -23,7 +23,6 @@ inputs:
     description: 'Name of the report to be generated'
     required: true
     default: 'report_json.json'
-
 outputs:
   time: # output will be available to future steps
     description: 'The message to output'
