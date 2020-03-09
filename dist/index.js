@@ -1970,9 +1970,6 @@ run();
 
 
 function createMessage(sites) {
-
-  console.log('starting to create the message')
-
   const NXT_LINE = '\n';
   const TAB = "\t";
   const BULLET = "-";
@@ -2024,9 +2021,6 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
     let jReportFile = fs.readFileSync(config_file_dir + "/" + report_name);
     jsonReport = JSON.parse(jReportFile);
 
-    console.log('sucessfully loaded the json file');
-    // console.log(JSON.stringify(jsonReport))
-
     let alertsFound = false;
     jsonReport['site'].forEach((site) => {
       if (site['alerts'].length !== 0) {
@@ -2035,7 +2029,7 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
     });
 
     if(!alertsFound){
-      console.log('no alerts found');
+      console.log('no alerts found by ZAP Scan, exiting the program!');
       return;
     }
   }catch (e) {
@@ -2064,16 +2058,12 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
     }
 
   }catch (e) {
-    console.log('Cannot find the zap configurations')
+    console.log('Cannot find the zap configurations');
     create_new_issue = true;
   }
 
   if (create_new_issue) {
-    console.log('starting to create an issue');
-
     let msg = createMessage(jsonReport['site']);
-
-    console.log('message is' + msg);
     const newIssue = await octokit.issues.create({
       owner: owner,
       repo: repo,
@@ -2085,7 +2075,7 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
     let yamlDump = Buffer.from(yaml.safeDump(jsonReport)).toString("base64");
     // fs.writeFileSync(`${config_file_dir}/${zapPath}/${config_file_name}`, yamlDump);
 
-    let zapFolderContents = []
+    let zapFolderContents = [];
     try{
       zapFolderContents = await octokit.repos.getContents({
         owner: owner,
@@ -2098,7 +2088,6 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
 
     let zapFile = _.find(zapFolderContents.data, {name: config_file_name});
     if (zapFile) {
-      console.log('file found so updating the file')
       let result = await updateFile(owner, repo, `${zapPath}/${config_file_name}`, 'adding new zap config', (yamlDump), zapFile.sha);
     }else {
       let result = await createFile(owner, repo, `${zapPath}/${config_file_name}`, 'adding new zap config', (yamlDump));
@@ -2108,28 +2097,74 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
     let jsonReportBase64 = Buffer.from(JSON.stringify(jsonReport)).toString("base64");
 
     if (reportFile) {
-      let result = await updateFile(owner, repo, `${zapPath}/${report_name}`, 'adding new zap config', jsonReportBase64, reportFile.sha);
+      console.log('starting to create a new zap report');
+      try{
+        console.log('starting to create a new zap config');
+        let result = await updateFile(owner, repo, `${zapPath}/${report_name}`, 'updating the report', jsonReportBase64, reportFile.sha);
+      }catch (e) {
+        console.log('failed when creating a new report!', err)
+      }
     } else {
-      let result = await createFile(owner, repo, `${zapPath}/${report_name}`, 'adding new zap config', jsonReportBase64);
+      try{
+        console.log('starting to create a new zap markdown');
+        let result = await createFile(owner, repo, `${zapPath}/${report_name}`, 'adding the new report', jsonReportBase64);
+      }catch (e) {
+        console.log('failed when creating a new report!', err)
+      }
     }
     console.log('The process have been completed!');
     return
+  }else {
+    console.log('hello world');
+    // Find the difference and update the values
+    let siteClone = generateDifference(jsonReport, configReport);
+    let msg = createMessage(siteClone);
+
+    let commentRes = await octokit.issues.createComment({
+      owner: owner,
+      repo: repo,
+      issue_number: jsonReport.issue,
+      body: msg
+    });
+
+    let yamlString = yaml.safeDump(configReport);
+    let reportString = JSON.stringify(jsonReport);
+    createOrUpdateReportAndConfig(yamlString, reportString, config_file_name, report_name, zapPath, repo, owner);
+    console.log('process completed successfully!')
+  }
+}
+
+async function createOrUpdateReportAndConfig(yamlString, jsonString, configFileName, reportName, zapPath, repo, owner) {
+  let zapFolderContents = [];
+  try{
+    zapFolderContents = await octokit.repos.getContents({
+      owner: owner,
+      repo: repo,
+      path: zapPath
+    });
+  }catch (e) {
+    console.log('The directory contents are empty! Creating new files for zap and report.')
   }
 
-  console.log('hello world');
-  // Find the difference and update the values
-  let siteClone = generateDifference(jsonReport, configReport);
-  let msg = createMessage(siteClone);
-  console.log(msg);
-  console.log(msg)
-  return;
-  // TODO Create a comment
+  let zapFile = _.find(zapFolderContents.data, {name: configFileName});
+  let reportFile = _.find(zapFolderContents.data, {name: reportName});
 
-  // TODO commit the zap file and report file
+  let yamlDump = Buffer.from(yamlString).toString("base64");
+  let jsonReportBase64 = Buffer.from(JSON.stringify(jsonString)).toString("base64");
 
-  // TODO exit
+  if (zapFile) {
+    let result = await updateFile(owner, repo, `${zapPath}/${configFileName}`, 'adding new zap config', (yamlDump), zapFile.sha);
+  }else {
+    let result = await createFile(owner, repo, `${zapPath}/${configFileName}`, 'adding new zap config', (yamlDump));
+  }
 
+  if (reportFile) {
+    let result = await updateFile(owner, repo, `${zapPath}/${reportName}`, 'updating the report', jsonReportBase64, reportFile.sha);
+  } else {
+    let result = await createFile(owner, repo, `${zapPath}/${reportName}`, 'adding the new report', jsonReportBase64);
+  }
 }
+
 
 async function createFile(owner, repo, path, message, content) {
   return await octokit.repos.createOrUpdateFile({
@@ -2153,7 +2188,6 @@ async function updateFile(owner, repo, path, message, content, sha) {
 }
 
 function generateDifference(jsonReport, configReport) {
-  // If have to update a file
   let siteClone = [];
   jsonReport.site.forEach((site) => {
     let previousSite = _.remove(configReport.site, {'@name': site['@name']})
@@ -2211,8 +2245,6 @@ function generateDifference(jsonReport, configReport) {
   });
   return siteClone;
 }
-
-// run();
 
 
 /***/ }),
