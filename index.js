@@ -16,7 +16,7 @@ async function run() {
     let workspace = core.getInput('workspace');
     let token = core.getInput('token');
     let repoName = core.getInput('repo_name');
-    let zapWorkDir = core.getInput('zap_word_dir');
+    let zapWorkDir = core.getInput('zap_work_dir');
     let branch = core.getInput('branch');
     let reportName = core.getInput('report_name');
     let zap_config_file_name = core.getInput('zap_conf_file_name');
