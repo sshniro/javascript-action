@@ -2088,6 +2088,7 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
   } else {
     console.log('Updating the issue with new changed');
     let siteClone = generateDifference(jsonReport, configReport);
+
     if (jsonReport.updated) {
       let msg = createMessage(siteClone);
       console.log('The following is the change in report', msg)
@@ -2100,8 +2101,10 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
 
       let yamlString = yaml.safeDump(jsonReport);
       let reportString = JSON.stringify(jsonReport);
-      createOrUpdateReportAndConfig(yamlString, reportString, config_file_name, report_name, zapPath, repo, owner);
-      console.log('process completed successfully!')
+      let upsertRes = createOrUpdateReportAndConfig(yamlString, reportString, config_file_name, report_name, zapPath, repo, owner);
+      if (upsertRes.reportUpsertResult != null && upsertRes.zapYAMLUpsertResult != null) {
+        console.log('process completed successfully!');
+      }
     } else {
       console.log('No changes have been observed!')
     }
@@ -2126,58 +2129,56 @@ async function createOrUpdateReportAndConfig(yamlString, jsonString, configFileN
   let yamlDump = Buffer.from(yamlString).toString("base64");
   let jsonReportBase64 = Buffer.from(JSON.stringify(jsonString)).toString("base64");
 
+  let zapYAMLUpsertResult = null;
   if (zapFile) {
-    try {
-      let result = await updateFile(owner, repo, `${zapPath}/${configFileName}`, 'updating new zap config', (yamlDump), zapFile.sha);
-    } catch (e) {
-      console.log('Error occurred while updating the config file');
-    }
+    zapYAMLUpsertResult = await updateFile(owner, repo, `${zapPath}/${configFileName}`, 'updating new zap config', (yamlDump), zapFile.sha);
 
   } else {
-    try {
-      let result = await createFile(owner, repo, `${zapPath}/${configFileName}`, 'adding new zap config', (yamlDump));
-    } catch (e) {
-      console.log('Error occurred while creating the config file', e)
-    }
+    zapYAMLUpsertResult = await createFile(owner, repo, `${zapPath}/${configFileName}`, 'adding new zap config', (yamlDump));
 
   }
-
+  let reportUpsertResult = null;
   if (reportFile) {
-    try {
-      let result = await updateFile(owner, repo, `${zapPath}/${reportName}`, 'updating the report', jsonReportBase64, reportFile.sha);
-    } catch (e) {
-      console.log('Error occurred while updating the report', e)
-    }
+    reportUpsertResult = await updateFile(owner, repo, `${zapPath}/${reportName}`, 'updating the report', jsonReportBase64, reportFile.sha);
   } else {
-    try {
-      let result = await createFile(owner, repo, `${zapPath}/${reportName}`, 'adding the new report', jsonReportBase64);
-    } catch (e) {
-      console.log('Error occurred while creating the report file', e)
-    }
-
+    reportUpsertResult = await createFile(owner, repo, `${zapPath}/${reportName}`, 'adding the new report', jsonReportBase64);
   }
+
+  return {reportUpsertResult: reportUpsertResult, zapYAMLUpsertResult: zapYAMLUpsertResult}
 }
 
 
 async function createFile(owner, repo, path, message, content) {
-  return await octokit.repos.createOrUpdateFile({
-    owner: owner,
-    repo: repo,
-    path: path,
-    message: message,
-    content: content
-  });
+  let res = null;
+  try {
+    res = await octokit.repos.createOrUpdateFile({
+      owner: owner,
+      repo: repo,
+      path: path,
+      message: message,
+      content: content
+    });
+  } catch (err) {
+    console.log(`Error Occurred while creating the file: ${path} `, err);
+  }
+  return res;
 }
 
 async function updateFile(owner, repo, path, message, content, sha) {
-  return await octokit.repos.createOrUpdateFile({
-    owner: owner,
-    repo: repo,
-    path: path,
-    message: message,
-    content: content,
-    sha: sha
-  });
+  let res = null;
+  try {
+    res = await octokit.repos.createOrUpdateFile({
+      owner: owner,
+      repo: repo,
+      path: path,
+      message: message,
+      content: content,
+      sha: sha
+    });
+  } catch (err) {
+    console.log(`Error Occurred while updating the file: ${path} `, err);
+  }
+  return null;
 }
 
 function generateDifference(jsonReport, configReport) {
@@ -2199,11 +2200,11 @@ function generateDifference(jsonReport, configReport) {
       let existingAlerts = _.intersectionBy(previousAlerts, alerts, 'pluginid');
 
       existingAlerts.forEach((existing) => {
-        let one = _.find(previousAlerts, {pluginid: existing.pluginid});
-        let two = _.find(alerts, {pluginid: existing.pluginid});
+        let prevAl = _.find(previousAlerts, {pluginid: existing.pluginid});
+        let newAl = _.find(alerts, {pluginid: existing.pluginid});
 
-        let previousInstances = one['instances'];
-        let newInstances = two['instances'];
+        let previousInstances = prevAl['instances'];
+        let newInstances = newAl['instances'];
 
         let removeCount = 0;
         let addCount = 0;
@@ -2223,9 +2224,9 @@ function generateDifference(jsonReport, configReport) {
         });
 
         if (removeCount !== 0 || addCount !== 0) {
-          two.removed = removeCount;
-          two.added = addCount;
-          updatedAlerts.push(two);
+          newAl.removed = removeCount;
+          newAl.added = addCount;
+          updatedAlerts.push(newAl);
         }
 
       });
