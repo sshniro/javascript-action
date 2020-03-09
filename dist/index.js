@@ -1949,7 +1949,7 @@ async function run() {
     context = github.context;
 
     let command = (`docker run --user root -v ${workspace}:/zap/wrk/:rw \
-    -t ${docker_name} zap-baseline.py -t ${target} -g gen.conf -J ${reportName} || echo 0`);
+    -t ${docker_name} zap-baseline.py -t ${target} -g gen.conf -J ${reportName} -w report_md.md|| echo 0`);
 
     try {
       let result = await exec.exec(command);

@@ -17,7 +17,7 @@ jobs:
           workspace: ${{ github.workspace }}
           token: ${{ secrets.GIT_TOKEN }}
           branch: 'master'
-          zap_work_dir: './zap'
+          zap_work_dir: '.zap'
           repo_name: ${{github.repository}}
           report_name: 'report_json.json'
           zap_conf_file_name: 'zap.yaml'

@@ -15,7 +15,7 @@ inputs:
   zap_work_dir:
     description: 'zap working directory'
     required: true
-    default: './zap'
+    default: '.zap'
   repo_name:
     description: 'Git repo name ownerName/repoName'
     required: true
