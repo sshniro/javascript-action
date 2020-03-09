@@ -1,4 +1,7 @@
-on: [push]
+on:
+  push:
+    paths-ignore:
+      - '.zap/**'
 
 jobs:
   hello_world_job:
