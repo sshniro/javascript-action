@@ -1,10 +1,29 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: 'ZAP Scan'
+description: 'Scans the web application with ZAP'
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  workspace:
+    description: 'workspace of the project'
+    required: true
+  token:
+    description: 'Github Token'
     required: true
     default: '1000'
+  branch:
+    description: 'branch of the repo'
+    required: true
+    default: 'master'
+  zap_work_dir:
+    description: 'zap working directory'
+    required: true
+    default: './zap'
+  repo_name:
+    description: 'Git repo name ownerName/repoName'
+    required: true
+  report_name:
+    description: 'Name of the report to be generated'
+    required: true
+    default: 'report_json.json'
+
 outputs:
   time: # output will be available to future steps
     description: 'The message to output'
