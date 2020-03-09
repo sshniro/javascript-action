@@ -1,5 +1,5 @@
 '@version': 2.8.0
-'@generated': 'Mon, 9 Mar 2020 10:25:39'
+'@generated': 'Mon, 9 Mar 2020 10:30:55'
 site:
   - '@name': 'https://www.zaproxy.org'
     '@host': www.zaproxy.org
@@ -200,18 +200,33 @@ site:
               https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules-alpha/index.xml
             method: GET
             evidence: 'Age: 0'
+          - uri: >-
+              https://www.zaproxy.org/blog/2016-01-04-zap-newsletter-2016-january/images/firefox-43.png
+            method: GET
+            evidence: 'Age: 324'
           - uri: 'https://www.zaproxy.org/docs/api/'
             method: GET
             evidence: HIT
           - uri: 'https://www.zaproxy.org/docs/desktop/addons/ajax-spider/tab/'
             method: GET
             evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/images/ui_tab_text.png'
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/16/break_add.png'
             method: GET
-            evidence: 'Age: 99'
-          - uri: 'https://www.zaproxy.org/support/'
+            evidence: 'Age: 379'
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/16/105.png'
             method: GET
-            evidence: 'Age: 0'
+            evidence: 'Age: 379'
+          - uri: >-
+              https://www.zaproxy.org/blog/2016-02-19-zap-newsletter-2016-february/images/image02.png
+            method: GET
+            evidence: 'Age: 327'
+          - uri: >-
+              https://www.zaproxy.org/blog/2016-01-04-zap-newsletter-2016-january/images/zap-xcold-3.png
+            method: GET
+            evidence: 'Age: 324'
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/fugue/equalizer.png'
+            method: GET
+            evidence: 'Age: 417'
           - uri: >-
               https://www.zaproxy.org/docs/desktop/addons/authentication-statistics/index.xml
             method: GET
@@ -220,19 +235,17 @@ site:
               https://www.zaproxy.org/docs/desktop/addons/plug-n-hack/clientstab/
             method: GET
             evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/images/expand_full.png'
-            method: GET
-            evidence: 'Age: 99'
           - uri: 'https://www.zaproxy.org/docs/desktop/ui/dialogs/options/callback/'
             method: GET
             evidence: 'Age: 0'
           - uri: >-
-              https://www.zaproxy.org/docs/desktop/start/features/authentication/
+              https://www.zaproxy.org/docs/desktop/addons/websockets/images/handshake.png
             method: GET
-            evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/guides/zapping-the-top-10/'
+            evidence: 'Age: 321'
+          - uri: >-
+              https://www.zaproxy.org/blog/2017-04-03-exploring-apis-with-zap/images/Tools-menu.png
             method: GET
-            evidence: 'Age: 0'
+            evidence: 'Age: 327'
           - uri: 'https://www.zaproxy.org/docs/desktop/releases/index.xml'
             method: GET
             evidence: 'Age: 0'
@@ -240,6 +253,10 @@ site:
               https://www.zaproxy.org/faq/how-do-you-configure-zap-to-test-an-application-on-localhost/
             method: GET
             evidence: 'Age: 0'
+          - uri: >-
+              https://www.zaproxy.org/blog/2017-08-22-zap-browser-launch/images/update-all.png
+            method: GET
+            evidence: 'Age: 327'
           - uri: 'https://www.zaproxy.org/docs/desktop/addons/fuzzer/processors/'
             method: GET
             evidence: 'Age: 0'
@@ -251,19 +268,7 @@ site:
               https://www.zaproxy.org/docs/desktop/ui/dialogs/session/context-struct/
             method: GET
             evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/images/16/096.png'
-            method: GET
-            evidence: 'Age: 99'
-          - uri: 'https://www.zaproxy.org/docs/desktop/releases/2.1.0/'
-            method: GET
-            evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/addons/websockets/api/'
-            method: GET
-            evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/ui/tabs/httpsessions/'
-            method: GET
-            evidence: 'Age: 0'
-        count: '493'
+        count: '600'
         solution: >-
           <p>Validate that the response does not contain sensitive, personal or
           user-specific information.  If it does, consider the use of the
@@ -792,6 +797,41 @@ site:
         cweid: '16'
         wascid: '15'
         sourceid: '3'
+      - pluginid: '90033'
+        alert: Loosely Scoped Cookie
+        name: Loosely Scoped Cookie
+        riskcode: '0'
+        confidence: '1'
+        riskdesc: Informational (Low)
+        desc: >-
+          <p>Cookies can be scoped by domain or path. This check is only
+          concerned with domain scope.The domain scope applied to a cookie
+          determines which domains can access it. For example, a cookie can be
+          scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely
+          scoped to a parent domain e.g. nottrusted.com. In the latter case, any
+          subdomain of nottrusted.com can access the cookie. Loosely scoped
+          cookies are common in mega-applications like google.com and live.com.
+          Cookies set from a subdomain like app.foo.bar are transmitted only to
+          that domain by the browser. However, cookies scoped to a parent-level
+          domain may be transmitted to the parent, or any subdomain of the
+          parent.</p>
+        instances:
+          - uri: 'https://www.zaproxy.org/'
+            method: GET
+          - uri: 'https://www.zaproxy.org/'
+            method: GET
+          - uri: 'https://www.zaproxy.org/robots.txt'
+            method: GET
+        count: '3'
+        solution: <p>Always scope cookies to a FQDN (Fully Qualified Domain Name).</p>
+        otherinfo: >-
+          <p>The origin domain used for comparison was:
+          </p><p>www.zaproxy.org</p><p>__cfduid=d51be0598b559c0bcdacd064a5555feb61583749781</p><p></p>
+        reference: >-
+          <p>https://tools.ietf.org/html/rfc6265#section-4.1</p><p>https://www.owasp.org/index.php/Testing_for_cookies_attributes_(OTG-SESS-002)</p><p>http://code.google.com/p/browsersec/wiki/Part2#Same-origin_policy_for_cookies</p>
+        cweid: '565'
+        wascid: '15'
+        sourceid: '3'
       - pluginid: '90022'
         alert: Application Error Disclosure
         name: Application Error Disclosure
@@ -937,41 +977,6 @@ site:
         cweid: '200'
         wascid: '13'
         sourceid: '3'
-      - pluginid: '90033'
-        alert: Loosely Scoped Cookie
-        name: Loosely Scoped Cookie
-        riskcode: '0'
-        confidence: '1'
-        riskdesc: Informational (Low)
-        desc: >-
-          <p>Cookies can be scoped by domain or path. This check is only
-          concerned with domain scope.The domain scope applied to a cookie
-          determines which domains can access it. For example, a cookie can be
-          scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely
-          scoped to a parent domain e.g. nottrusted.com. In the latter case, any
-          subdomain of nottrusted.com can access the cookie. Loosely scoped
-          cookies are common in mega-applications like google.com and live.com.
-          Cookies set from a subdomain like app.foo.bar are transmitted only to
-          that domain by the browser. However, cookies scoped to a parent-level
-          domain may be transmitted to the parent, or any subdomain of the
-          parent.</p>
-        instances:
-          - uri: 'https://www.zaproxy.org/'
-            method: GET
-          - uri: 'https://www.zaproxy.org/robots.txt'
-            method: GET
-          - uri: 'https://www.zaproxy.org/'
-            method: GET
-        count: '3'
-        solution: <p>Always scope cookies to a FQDN (Fully Qualified Domain Name).</p>
-        otherinfo: >-
-          <p>The origin domain used for comparison was:
-          </p><p>www.zaproxy.org</p><p>__cfduid=dc8330d4f74473315071167bd8fd824ac1583749455</p><p></p>
-        reference: >-
-          <p>https://tools.ietf.org/html/rfc6265#section-4.1</p><p>https://www.owasp.org/index.php/Testing_for_cookies_attributes_(OTG-SESS-002)</p><p>http://code.google.com/p/browsersec/wiki/Part2#Same-origin_policy_for_cookies</p>
-        cweid: '565'
-        wascid: '15'
-        sourceid: '3'
       - pluginid: '10108'
         alert: Reverse Tabnabbing
         name: Reverse Tabnabbing
@@ -1051,4 +1056,4 @@ site:
         cweid: '359'
         wascid: '13'
         sourceid: '3'
-issue: 19
+issue: 20
