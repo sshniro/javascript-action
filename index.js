@@ -54,6 +54,7 @@ async function run() {
 run();
 
 
+
 function createMessage(sites) {
   const NXT_LINE = '\n';
   const TAB = "\t";
@@ -165,7 +166,7 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
     jsonReport.issue = newIssue.data.number;
 
     // fs.writeFileSync(`${config_file_dir}/${zapPath}/${config_file_name}`, yamlDump);
-    let yamlString = yaml.safeDump(configReport);
+    let yamlString = yaml.safeDump(jsonReport);
     let reportString = JSON.stringify(jsonReport);
     createOrUpdateReportAndConfig(yamlString, reportString, config_file_name, report_name, zapPath, repo, owner);
     let jsonReportBase64 = Buffer.from(JSON.stringify(jsonReport)).toString("base64");
