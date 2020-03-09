@@ -55,47 +55,60 @@ const fs = __webpack_require__(747);
 const yaml = __webpack_require__(113)
 const github = __webpack_require__(558);
 const _ = __webpack_require__(38);
+const readline = __webpack_require__(58);
 
+// const helper = require('./dev-helper')
+// helper.fillEnvironmentVariables();
 
 let octokit;
 let context;
 
-// most @actions toolkit packages have async methods
 async function run() {
+
     try {
         let workspace = core.getInput('workspace');
         let token = core.getInput('token');
         let repoName = core.getInput('repo_name');
         let zapWorkDir = core.getInput('zap_work_dir');
         let branch = core.getInput('branch');
-        let reportName = core.getInput('report_name');
+        let mdReportName = core.getInput('report_name');
         let zap_config_file_name = core.getInput('zap_conf_file_name');
         let docker_name = core.getInput('docker_name');
         let target = core.getInput('target');
+        let rulesFileName = core.getInput('rules_file_name');
 
-        console.log('workspace' + workspace);
-        console.log('token' + token);
-        console.log('repodetails' + repoName);
-        console.log('zapWorkDir' + zapWorkDir);
-        console.log('branch' + branch);
-        console.log('report_name' + reportName);
-        console.log('zap_config_file_name' + reportName);
-        console.log('docker_name' + reportName);
-        console.log('target' + reportName);
+        let jsonReportName = 'report_json.json';
+
+        console.log('workspace: ' + workspace);
+        console.log('token: ' + token);
+        console.log('repoName: ' + repoName);
+        console.log('zapWorkDir: ' + zapWorkDir);
+        console.log('branch: ' + branch);
+        console.log('md_report_name: ' + mdReportName);
+        console.log('zap_config_file_name: ' + zap_config_file_name);
+        console.log('docker_name: ' + docker_name);
+        console.log('target: ' + target);
+        console.log('rulesFileName: ' + rulesFileName);
 
         octokit = new github.GitHub(token);
         context = github.context;
+        let plugins = [];
+        if (rulesFileName) {
+            plugins = await processLineByLine(`${workspace}/${zapWorkDir}/${rulesFileName}`);
+        }
 
-        let command = (`docker run --user root -v ${workspace}:/zap/wrk/:rw \
-    -t ${docker_name} zap-baseline.py -t ${target} -g gen.conf -J ${reportName} -w report_md.md`);
+        let command = (`docker run --user root -v ${workspace}:/zap/wrk/:rw -t ${docker_name} zap-baseline.py -t ${target} -g gen.conf -J ${jsonReportName} -w ${mdReportName}`);
+
+        if (plugins.length !== 0) {
+            command = command + ` -c ${zapWorkDir}/${rulesFileName}`
+        }
 
         try {
-            let result = await exec.exec(command);
+            // let result = await exec.exec(command);
         } catch (err) {
             console.log(err);
         }
-        compute(token, repoName, workspace, zap_config_file_name, branch, reportName, zapWorkDir);
-        // await exec.exec(`cat ${workspace}/report_json.json`);
+        let res = await compute(token, repoName, workspace, zap_config_file_name, branch, jsonReportName, zapWorkDir, plugins, mdReportName);
         core.setOutput('time', new Date().toTimeString());
     } catch (error) {
         core.setFailed(error.message);
@@ -103,6 +116,29 @@ async function run() {
 }
 
 run();
+
+async function processLineByLine(tsvFile) {
+    let plugins = [];
+    try {
+        const fileStream = fs.createReadStream(tsvFile);
+        const rl = readline.createInterface({
+            input: fileStream,
+            crlfDelay: Infinity
+        });
+        for await (const line of rl) {
+            if (line.charAt(0) !== '#') {
+                let tmp = line.split('\t');
+                if (tmp[0].trim() !== '' && tmp[1].trim().toUpperCase() === 'IGNORE') {
+                    plugins.push(tmp[0].trim());
+                }
+            }
+        }
+    } catch (err) {
+        console.log('Error when reading the rules file!')
+    }
+
+    return plugins;
+}
 
 function createMessage(sites) {
     const NXT_LINE = '\n';
@@ -147,20 +183,24 @@ function createMessage(sites) {
     return msg;
 }
 
+async function filterReport(jsonReport, plugins) {
+    jsonReport.forEach();
+    return jsonReport;
+}
 
-async function compute(token, repo_name, config_file_dir, config_file_name, branch, report_name, zapPath) {
+async function compute(token, repoName, workSpace, configFileName, branch, jsonReportName, zapPath, plugins, mdReportName) {
 
     let jsonReport;
     let configReport;
     let create_new_issue = false;
     let issue = null;
 
-    let tmp = repo_name.split('/');
+    let tmp = repoName.split('/');
     let owner = tmp[0];
     let repo = tmp[1];
 
     try {
-        let jReportFile = fs.readFileSync(config_file_dir + "/" + report_name);
+        let jReportFile = fs.readFileSync(workSpace + "/" + jsonReportName);
         jsonReport = JSON.parse(jReportFile);
 
         let alertsFound = false;
@@ -179,9 +219,11 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
         return
     }
 
+    let originalReport = JSON.parse(JSON.stringify(jsonReport));
+
 
     try {
-        let yamlFile = fs.readFileSync(`${config_file_dir}/${zapPath}/${config_file_name}`);
+        let yamlFile = fs.readFileSync(`${workSpace}/${zapPath}/${configFileName}`);
         configReport = yaml.safeLoad(yamlFile);
 
         if (configReport === undefined) {
@@ -195,12 +237,12 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
                 number: configReport.issue,
             });
 
-        if (issue.state === 'closed') {
+        if (issue.data.state === 'closed') {
             create_new_issue = true;
         }
 
     } catch (e) {
-        console.log('Cannot find the zap configurations');
+        console.log('Previous ZAP results are not available in the dir, creating new Issue!');
         create_new_issue = true;
     }
 
@@ -216,9 +258,11 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
 
         // fs.writeFileSync(`${config_file_dir}/${zapPath}/${config_file_name}`, yamlDump);
         let yamlString = yaml.safeDump(jsonReport);
-        let reportString = JSON.stringify(jsonReport);
-        let upsertRes = createOrUpdateReportAndConfig(yamlString, reportString, config_file_name, report_name, zapPath, repo, owner);
-        if (upsertRes.reportUpsertResult != null && upsertRes.zapYAMLUpsertResult != null) {
+        // let reportString = JSON.stringify(jsonReport);
+        let reportString = await readMDFile(`${workSpace}/${mdReportName}`);
+
+        let upsertResponse = await createOrUpdateReportAndConfig(yamlString, reportString, configFileName, jsonReportName, zapPath, repo, owner);
+        if (upsertResponse.reportUpsertResult != null && upsertResponse.zapYAMLUpsertResult != null) {
             console.log('process completed successfully!');
         }
     } else {
@@ -236,15 +280,27 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
             });
 
             let yamlString = yaml.safeDump(jsonReport);
-            let reportString = JSON.stringify(jsonReport);
-            let upsertRes = createOrUpdateReportAndConfig(yamlString, reportString, config_file_name, report_name, zapPath, repo, owner);
-            if (upsertRes.reportUpsertResult != null && upsertRes.zapYAMLUpsertResult != null) {
+            // let reportString = JSON.stringify(jsonReport);
+            let reportString = await readMDFile(`${workSpace}/${mdReportName}`);
+
+            let upsertResponse = await createOrUpdateReportAndConfig(yamlString, reportString, configFileName, jsonReportName, zapPath, repo, owner);
+            if (upsertResponse.reportUpsertResult != null && upsertResponse.zapYAMLUpsertResult != null) {
                 console.log('process completed successfully!');
             }
         } else {
             console.log('No changes have been observed!')
         }
     }
+}
+
+async function readMDFile(reportName) {
+    let res = '';
+    try {
+        res = fs.readFileSync(reportName, {encoding: 'base64'});
+    } catch (err) {
+        console.log('error while reading the markdown file!')
+    }
+    return res;
 }
 
 async function createOrUpdateReportAndConfig(yamlString, jsonString, configFileName, reportName, zapPath, repo, owner) {
@@ -317,17 +373,21 @@ async function updateFile(owner, repo, path, message, content, sha) {
     return res;
 }
 
-function generateDifference(jsonReport, configReport) {
+function generateDifference(newReport, oldReport) {
     // If have to update a file
-    jsonReport.updated = false;
+    newReport.updated = false;
     let siteClone = [];
-    jsonReport.site.forEach((site) => {
-        let previousSite = _.remove(configReport.site, {'@name': site['@name']})
-        if (previousSite === undefined) {
-            siteClone.push(previousSite)
+    newReport.site.forEach((newReportSite) => {
+        // Check if the new report site already exists in the previous report
+        let previousSite = _.filter(oldReport.site, s => s['@name'] === newReportSite['@name']);
+        // If does not exists add it to the array without further processing
+        if (previousSite.length === 0) {
+            newReport.updated = true;
+            siteClone.push(newReportSite);
         } else {
-            let newSite = JSON.parse(JSON.stringify(site));
-            let alerts = site.alerts;
+            // deep clone the variable for further processing
+            let newSite = JSON.parse(JSON.stringify(newReportSite));
+            let alerts = newReportSite.alerts;
             let previousAlerts = previousSite[0].alerts;
 
             let updatedAlerts = [];
@@ -375,7 +435,7 @@ function generateDifference(jsonReport, configReport) {
             siteClone.push(newSite);
 
             if (newAlerts.length !== 0 || removedAlerts.length !== 0 || updatedAlerts.length !== 0) {
-                jsonReport.updated = true;
+                newReport.updated = true;
             }
         }
     });
@@ -19336,6 +19396,13 @@ function addHook (state, kind, name, hook) {
   })
 }
 
+
+/***/ }),
+
+/***/ 58:
+/***/ (function(module) {
+
+module.exports = require("readline");
 
 /***/ }),
 

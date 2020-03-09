@@ -11,16 +11,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: ZAP Scan
-        id: hello
+        id: Starting ZAP
         uses: ./
         with:
           workspace: ${{ github.workspace }}
           token: ${{ secrets.GIT_TOKEN }}
-          branch: 'master'
-          zap_work_dir: '.zap'
           repo_name: ${{github.repository}}
-          report_name: 'report_json.json'
+          zap_work_dir: '.zap'
+          branch: 'master'
+          report_name: 'report_md.md'
           zap_conf_file_name: 'zap.yaml'
           docker_name: 'owasp/zap2docker-stable'
           target: 'https://www.example.com'
-      - run: ls -l

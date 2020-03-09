@@ -7,9 +7,8 @@ inputs:
   token:
     description: 'Github Token'
     required: true
-    default: '1000'
   branch:
-    description: 'branch of the repo'
+    description: 'branch of the repo to commit the files'
     required: true
     default: 'master'
   zap_work_dir:
@@ -17,12 +16,16 @@ inputs:
     required: true
     default: '.zap'
   repo_name:
-    description: 'Git repo name ownerName/repoName'
+    description: 'Git repo name (ownerName/repoName)'
     required: true
   report_name:
     description: 'Name of the report to be generated'
     required: true
-    default: 'report_json.json'
+    default: 'report_md.md'
+  zap_conf_file_name:
+    description: 'The YAML file to be generated to maintain history of scan'
+    required: true
+    default: 'zap.yaml'
 outputs:
   time: # output will be available to future steps
     description: 'The message to output'
