@@ -50,7 +50,6 @@ module.exports =
 
 const core = __webpack_require__(572);
 const exec = __webpack_require__(987);
-const wait = __webpack_require__(241);
 const fs = __webpack_require__(747);
 const yaml = __webpack_require__(113)
 const github = __webpack_require__(558);
@@ -318,10 +317,10 @@ async function createOrUpdateReportAndConfig(yamlString, reportString, configFil
 
     let zapYAMLUpsertResult = null;
     if (zapFile) {
-        zapYAMLUpsertResult = await updateFile(owner, repo, `${zapPath}/${configFileName}`, 'updating new zap config', (yamlDump), zapFile.sha);
+        zapYAMLUpsertResult = await updateFile(owner, repo, `${zapPath}/${configFileName}`, 'updating new zap config', yamlString, zapFile.sha);
 
     } else {
-        zapYAMLUpsertResult = await createFile(owner, repo, `${zapPath}/${configFileName}`, 'adding new zap config', (yamlDump));
+        zapYAMLUpsertResult = await createFile(owner, repo, `${zapPath}/${configFileName}`, 'adding new zap config', yamlString);
 
     }
     let reportUpsertResult = null;
@@ -22656,24 +22655,6 @@ function withDefaults (request, newDefaults) {
   newApi.defaults = withDefaults.bind(null, newRequest)
   return newApi
 }
-
-
-/***/ }),
-
-/***/ 241:
-/***/ (function(module) {
-
-let wait = function(milliseconds) {
-  return new Promise((resolve, reject) => {
-    if (typeof(milliseconds) !== 'number') { 
-      throw new Error('milleseconds not a number'); 
-    }
-
-    setTimeout(() => resolve("done!"), milliseconds)
-  });
-}
-
-module.exports = wait;
 
 
 /***/ }),

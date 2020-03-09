@@ -1,6 +1,5 @@
 const core = require('@actions/core');
 const exec = require('@actions/exec');
-const wait = require('./wait');
 const fs = require('fs');
 const yaml = require('js-yaml')
 const github = require('@actions/github');
@@ -268,10 +267,10 @@ async function createOrUpdateReportAndConfig(yamlString, reportString, configFil
 
     let zapYAMLUpsertResult = null;
     if (zapFile) {
-        zapYAMLUpsertResult = await updateFile(owner, repo, `${zapPath}/${configFileName}`, 'updating new zap config', (yamlDump), zapFile.sha);
+        zapYAMLUpsertResult = await updateFile(owner, repo, `${zapPath}/${configFileName}`, 'updating new zap config', yamlString, zapFile.sha);
 
     } else {
-        zapYAMLUpsertResult = await createFile(owner, repo, `${zapPath}/${configFileName}`, 'adding new zap config', (yamlDump));
+        zapYAMLUpsertResult = await createFile(owner, repo, `${zapPath}/${configFileName}`, 'adding new zap config', yamlString);
 
     }
     let reportUpsertResult = null;
