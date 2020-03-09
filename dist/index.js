@@ -2099,17 +2099,17 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
     if (reportFile) {
       console.log('starting to create a new zap report');
       try{
-        console.log('starting to create a new zap config');
+        console.log('starting to create a new zap config, path: ', `${zapPath}/${report_name}`);
         let result = await updateFile(owner, repo, `${zapPath}/${report_name}`, 'updating the report', jsonReportBase64, reportFile.sha);
       }catch (e) {
-        console.log('failed when creating a new report!', err)
+        console.log('failed when creating a new report!', e)
       }
     } else {
       try{
-        console.log('starting to create a new zap markdown');
+        console.log('starting to create a new zap markdown, path: ', `${zapPath}/${report_name}`);
         let result = await createFile(owner, repo, `${zapPath}/${report_name}`, 'adding the new report', jsonReportBase64);
       }catch (e) {
-        console.log('failed when creating a new report!', err)
+        console.log('failed when creating a new report!', e)
       }
     }
     console.log('The process have been completed!');
