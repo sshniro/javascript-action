@@ -1952,7 +1952,7 @@ async function run() {
     -t ${docker_name} zap-baseline.py -t ${target} -g gen.conf -J ${reportName} || echo 0`);
 
     try {
-      // let result = await exec.exec(command);
+      let result = await exec.exec(command);
     }
     catch(err) {
       console.log(err);
@@ -1967,8 +1967,6 @@ async function run() {
 }
 
 run();
-
-
 
 function createMessage(sites) {
   const NXT_LINE = '\n';
