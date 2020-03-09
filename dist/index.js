@@ -1977,26 +1977,33 @@ function createMessage(sites) {
 
   sites.forEach((site => {
     msg = msg + `${BULLET} Site[${site["@name"]}] ${NXT_LINE}`
-    if(site.hasOwnProperty('alerts')){
-      msg = `${msg} ${TAB} **New Alerts** ${NXT_LINE}`;
-      site.alerts.forEach((alert) => {
-        msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
-      });
+    if (site.hasOwnProperty('alerts')) {
+      if (site.alerts.length !== 0) {
+        msg = `${msg} ${TAB} **New Alerts** ${NXT_LINE}`;
+        site.alerts.forEach((alert) => {
+          msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
+        });
+      }
     }
 
-    if(site.hasOwnProperty('removedAlerts')){
-      msg = `${msg} ${TAB} **Removed Alerts** ${NXT_LINE}`;
-      site.removedAlerts.forEach((alert) => {
-        msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
-      });
+    if (site.hasOwnProperty('removedAlerts')) {
+      if (site.removedAlerts.length !== 0) {
+        msg = `${msg} ${TAB} **Removed Alerts** ${NXT_LINE}`;
+        site.removedAlerts.forEach((alert) => {
+          msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
+        });
+      }
+
     }
 
-    if(site.hasOwnProperty('updatedAlerts')){
-      msg = `${msg} ${TAB} **Updated Alerts** ${NXT_LINE}`;
-      site.updatedAlerts.forEach((alert) => {
-        msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} 
+    if (site.hasOwnProperty('updatedAlerts')) {
+      if (site.updatedAlerts.length !== 0) {
+        msg = `${msg} ${TAB} **Updated Alerts** ${NXT_LINE}`;
+        site.updatedAlerts.forEach((alert) => {
+          msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} 
                 added: ${alert.added} , removed: ${alert.removed}${NXT_LINE}`
-      });
+        });
+      }
     }
 
     msg = msg + NXT_LINE
@@ -2017,7 +2024,7 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
   let owner = tmp[0];
   let repo = tmp[1];
 
-  try{
+  try {
     let jReportFile = fs.readFileSync(config_file_dir + "/" + report_name);
     jsonReport = JSON.parse(jReportFile);
 
@@ -2028,25 +2035,25 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
       }
     });
 
-    if(!alertsFound){
+    if (!alertsFound) {
       console.log('no alerts found by ZAP Scan, exiting the program!');
       return;
     }
-  }catch (e) {
+  } catch (e) {
     console.log('Cannot find the report exiting program');
     return
   }
 
 
-  try{
-    let yamlFile = fs.readFileSync(  `${config_file_dir}/${zapPath}/${config_file_name}`);
+  try {
+    let yamlFile = fs.readFileSync(`${config_file_dir}/${zapPath}/${config_file_name}`);
     configReport = yaml.safeLoad(yamlFile);
 
     if (configReport === undefined) {
       create_new_issue = true;
     }
 
-    if(configReport.hasOwnProperty("issue"))
+    if (configReport.hasOwnProperty("issue"))
       issue = await octokit.issues.get({
         owner: owner,
         repo: repo,
@@ -2057,7 +2064,7 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
       create_new_issue = true;
     }
 
-  }catch (e) {
+  } catch (e) {
     console.log('Cannot find the zap configurations');
     create_new_issue = true;
   }
@@ -2072,77 +2079,45 @@ async function compute(token, repo_name, config_file_dir, config_file_name, bran
     });
     jsonReport.issue = newIssue.data.number;
 
-    let yamlDump = Buffer.from(yaml.safeDump(jsonReport)).toString("base64");
     // fs.writeFileSync(`${config_file_dir}/${zapPath}/${config_file_name}`, yamlDump);
-
-    let zapFolderContents = [];
-    try{
-      zapFolderContents = await octokit.repos.getContents({
-        owner: owner,
-        repo: repo,
-        path: zapPath
-      });
-    }catch (e) {
-      console.log('the file is not avaiable')
-    }
-
-    let zapFile = _.find(zapFolderContents.data, {name: config_file_name});
-    if (zapFile) {
-      let result = await updateFile(owner, repo, `${zapPath}/${config_file_name}`, 'adding new zap config', (yamlDump), zapFile.sha);
-    }else {
-      let result = await createFile(owner, repo, `${zapPath}/${config_file_name}`, 'adding new zap config', (yamlDump));
-    }
-
-    let reportFile = _.find(zapFolderContents.data, {name: repo_name});
-    let jsonReportBase64 = Buffer.from(JSON.stringify(jsonReport)).toString("base64");
-
-    if (reportFile) {
-      console.log('starting to create a new zap report');
-      try{
-        console.log('starting to create a new zap config, path: ', `${zapPath}/${report_name}`);
-        let result = await updateFile(owner, repo, `${zapPath}/${report_name}`, 'updating the report', jsonReportBase64, reportFile.sha);
-      }catch (e) {
-        console.log('failed when creating a new report!', e)
-      }
-    } else {
-      try{
-        console.log('starting to create a new zap markdown, path: ', `${zapPath}/${report_name}`);
-        let result = await createFile(owner, repo, `${zapPath}/${report_name}`, 'adding the new report', jsonReportBase64);
-      }catch (e) {
-        console.log('failed when creating a new report!', e)
-      }
-    }
-    console.log('The process have been completed!');
-    return
-  }else {
-    console.log('hello world');
-    // Find the difference and update the values
-    let siteClone = generateDifference(jsonReport, configReport);
-    let msg = createMessage(siteClone);
-
-    let commentRes = await octokit.issues.createComment({
-      owner: owner,
-      repo: repo,
-      issue_number: jsonReport.issue,
-      body: msg
-    });
-
     let yamlString = yaml.safeDump(configReport);
     let reportString = JSON.stringify(jsonReport);
     createOrUpdateReportAndConfig(yamlString, reportString, config_file_name, report_name, zapPath, repo, owner);
-    console.log('process completed successfully!')
+    let jsonReportBase64 = Buffer.from(JSON.stringify(jsonReport)).toString("base64");
+
+    console.log('The process have been completed!');
+  } else {
+    console.log('Updating the issue with new changed');
+    let siteClone = generateDifference(jsonReport, configReport);
+    if (jsonReport.updated) {
+      let msg = createMessage(siteClone);
+      console.log('The following is the change in report', msg)
+      let commentRes = await octokit.issues.createComment({
+        owner: owner,
+        repo: repo,
+        issue_number: configReport.issue,
+        body: msg
+      });
+
+      let yamlString = yaml.safeDump(jsonReport);
+      let reportString = JSON.stringify(jsonReport);
+      createOrUpdateReportAndConfig(yamlString, reportString, config_file_name, report_name, zapPath, repo, owner);
+      console.log('process completed successfully!')
+    } else {
+      console.log('No changes have been observed!')
+    }
   }
 }
 
 async function createOrUpdateReportAndConfig(yamlString, jsonString, configFileName, reportName, zapPath, repo, owner) {
   let zapFolderContents = [];
-  try{
+  try {
     zapFolderContents = await octokit.repos.getContents({
       owner: owner,
       repo: repo,
       path: zapPath
     });
-  }catch (e) {
+  } catch (e) {
     console.log('The directory contents are empty! Creating new files for zap and report.')
   }
 
@@ -2153,15 +2128,34 @@ async function createOrUpdateReportAndConfig(yamlString, jsonString, configFileN
   let jsonReportBase64 = Buffer.from(JSON.stringify(jsonString)).toString("base64");
 
   if (zapFile) {
-    let result = await updateFile(owner, repo, `${zapPath}/${configFileName}`, 'adding new zap config', (yamlDump), zapFile.sha);
-  }else {
-    let result = await createFile(owner, repo, `${zapPath}/${configFileName}`, 'adding new zap config', (yamlDump));
+    try {
+      let result = await updateFile(owner, repo, `${zapPath}/${configFileName}`, 'updating new zap config', (yamlDump), zapFile.sha);
+    } catch (e) {
+      console.log('Error occurred while updating the config file');
+    }
+
+  } else {
+    try {
+      let result = await createFile(owner, repo, `${zapPath}/${configFileName}`, 'adding new zap config', (yamlDump));
+    } catch (e) {
+      console.log('Error occurred while creating the config file', e)
+    }
+
   }
 
   if (reportFile) {
-    let result = await updateFile(owner, repo, `${zapPath}/${reportName}`, 'updating the report', jsonReportBase64, reportFile.sha);
+    try {
+      let result = await updateFile(owner, repo, `${zapPath}/${reportName}`, 'updating the report', jsonReportBase64, reportFile.sha);
+    } catch (e) {
+      console.log('Error occurred while updating the report', e)
+    }
   } else {
-    let result = await createFile(owner, repo, `${zapPath}/${reportName}`, 'adding the new report', jsonReportBase64);
+    try {
+      let result = await createFile(owner, repo, `${zapPath}/${reportName}`, 'adding the new report', jsonReportBase64);
+    } catch (e) {
+      console.log('Error occurred while creating the report file', e)
+    }
+
   }
 }
 
@@ -2188,6 +2182,8 @@ async function updateFile(owner, repo, path, message, content, sha) {
 }
 
 function generateDifference(jsonReport, configReport) {
+  // If have to update a file
+  jsonReport.updated = false;
   let siteClone = [];
   jsonReport.site.forEach((site) => {
     let previousSite = _.remove(configReport.site, {'@name': site['@name']})
@@ -2204,8 +2200,8 @@ function generateDifference(jsonReport, configReport) {
       let existingAlerts = _.intersectionBy(previousAlerts, alerts, 'pluginid');
 
       existingAlerts.forEach((existing) => {
-        let one = _.find(previousAlerts, {pluginid: existing.pluginid})
-        let two = _.find(alerts, {pluginid: existing.pluginid})
+        let one = _.find(previousAlerts, {pluginid: existing.pluginid});
+        let two = _.find(alerts, {pluginid: existing.pluginid});
 
         let previousInstances = one['instances'];
         let newInstances = two['instances'];
@@ -2241,6 +2237,10 @@ function generateDifference(jsonReport, configReport) {
         newSite.updatedAlerts = updatedAlerts;
       }
       siteClone.push(newSite);
+
+      if (newAlerts.length !== 0 || removedAlerts.length !== 0 || updatedAlerts.length !== 0) {
+        jsonReport.updated = true;
+      }
     }
   });
   return siteClone;
