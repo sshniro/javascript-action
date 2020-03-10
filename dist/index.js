@@ -103,7 +103,7 @@ async function run() {
         }
 
         try {
-            // let result = await exec.exec(command);
+            let result = await exec.exec(command);
         } catch (err) {
             console.log(err);
         }
@@ -185,10 +185,9 @@ function createMessage(sites) {
 async function filterReport(jsonReport, plugins) {
     jsonReport.site.forEach((s) => {
         if (s.hasOwnProperty('alerts') && s.alerts.length !== 0) {
-            let mainPlugins = s.alerts.filter(function(e) {
+            s.alerts = s.alerts.filter(function(e) {
                 return !plugins.includes(e.pluginid)
             });
-            s.alerts = mainPlugins
         }
     });
     return jsonReport;
