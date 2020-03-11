@@ -1914,6 +1914,17 @@ Instances: 3
   
   
   
+* URL: [https://www.zaproxy.org/getting-started/images/zap-qstart-learnmore.png](https://www.zaproxy.org/getting-started/images/zap-qstart-learnmore.png)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 314`
+  
+  
+  
+  
 * URL: [https://www.zaproxy.org/docs/desktop/ui/dialogs/options/callback/](https://www.zaproxy.org/docs/desktop/ui/dialogs/options/callback/)
   
   
@@ -1958,6 +1969,17 @@ Instances: 3
   
   
   
+* URL: [https://www.zaproxy.org/img/favicon.ico](https://www.zaproxy.org/img/favicon.ico)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 501`
+  
+  
+  
+  
 * URL: [https://www.zaproxy.org/faq/how-do-you-configure-zap-to-test-an-application-on-localhost/](https://www.zaproxy.org/faq/how-do-you-configure-zap-to-test-an-application-on-localhost/)
   
   
@@ -1987,28 +2009,6 @@ Instances: 3
   
   
   * Evidence: `Age: 0`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/docs/desktop/images/16/107.png](https://www.zaproxy.org/docs/desktop/images/16/107.png)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 500`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/blog/2012-12-10-zap-2-0-0-and-the-google-summer-of-code-2012-projects/images/ZAP-screenshot-websockets-thumbnail.png](https://www.zaproxy.org/blog/2012-12-10-zap-2-0-0-and-the-google-summer-of-code-2012-projects/images/ZAP-screenshot-websockets-thumbnail.png)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 500`
   
   
   
@@ -2068,18 +2068,18 @@ Instances: 3
   
   
   
-* URL: [https://www.zaproxy.org/docs/desktop/images/fugue/equalizer.png](https://www.zaproxy.org/docs/desktop/images/fugue/equalizer.png)
+* URL: [https://www.zaproxy.org/docs/desktop/ui/dialogs/index.xml](https://www.zaproxy.org/docs/desktop/ui/dialogs/index.xml)
   
   
   * Method: `GET`
   
   
-  * Evidence: `Age: 500`
+  * Evidence: `Age: 0`
   
   
   
   
-Instances: 603
+Instances: 460
   
 ### Solution
 <p>Validate that the response does not contain sensitive, personal or user-specific information.  If it does, consider the use of the following HTTP response headers, to limit, or prevent the content being stored and retrieved from the cache by another user:</p><p>Cache-Control: no-cache, no-store, must-revalidate, private</p><p>Pragma: no-cache</p><p>Expires: 0</p><p>This configuration directs both HTTP 1.0 and HTTP 1.1 compliant caching servers to not store the response, and to not retrieve the response (without validation) from the cache, in response to a similar request.</p>
@@ -2351,6 +2351,64 @@ Instances: 492
   
   
   
+### Loosely Scoped Cookie
+##### Informational (Low)
+  
+  
+  
+  
+#### Description
+<p>Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com. Cookies set from a subdomain like app.foo.bar are transmitted only to that domain by the browser. However, cookies scoped to a parent-level domain may be transmitted to the parent, or any subdomain of the parent.</p>
+  
+  
+  
+* URL: [https://www.zaproxy.org/](https://www.zaproxy.org/)
+  
+  
+  * Method: `GET`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/robots.txt](https://www.zaproxy.org/robots.txt)
+  
+  
+  * Method: `GET`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/](https://www.zaproxy.org/)
+  
+  
+  * Method: `GET`
+  
+  
+  
+  
+Instances: 3
+  
+### Solution
+<p>Always scope cookies to a FQDN (Fully Qualified Domain Name).</p>
+  
+### Other information
+<p>The origin domain used for comparison was: </p><p>www.zaproxy.org</p><p>__cfduid=d508e1fcab54e31e1a34f67cbf2218b9a1583933293</p><p></p>
+  
+### Reference
+* https://tools.ietf.org/html/rfc6265#section-4.1
+* https://www.owasp.org/index.php/Testing_for_cookies_attributes_(OTG-SESS-002)
+* http://code.google.com/p/browsersec/wiki/Part2#Same-origin_policy_for_cookies
+
+  
+#### CWE Id : 565
+  
+#### WASC Id : 15
+  
+#### Source ID : 3
+
+  
+  
+  
 ### Information Disclosure - Suspicious Comments
 ##### Informational (Low)
   
@@ -2409,63 +2467,5 @@ Instances: 4
 #### CWE Id : 200
   
 #### WASC Id : 13
-  
-#### Source ID : 3
-
-  
-  
-  
-### Loosely Scoped Cookie
-##### Informational (Low)
-  
-  
-  
-  
-#### Description
-<p>Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com. Cookies set from a subdomain like app.foo.bar are transmitted only to that domain by the browser. However, cookies scoped to a parent-level domain may be transmitted to the parent, or any subdomain of the parent.</p>
-  
-  
-  
-* URL: [https://www.zaproxy.org/robots.txt](https://www.zaproxy.org/robots.txt)
-  
-  
-  * Method: `GET`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/](https://www.zaproxy.org/)
-  
-  
-  * Method: `GET`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/](https://www.zaproxy.org/)
-  
-  
-  * Method: `GET`
-  
-  
-  
-  
-Instances: 3
-  
-### Solution
-<p>Always scope cookies to a FQDN (Fully Qualified Domain Name).</p>
-  
-### Other information
-<p>The origin domain used for comparison was: </p><p>www.zaproxy.org</p><p>__cfduid=d8c9b91a1d6de7f04e47d8b902bd868da1583932983</p><p></p>
-  
-### Reference
-* https://tools.ietf.org/html/rfc6265#section-4.1
-* https://www.owasp.org/index.php/Testing_for_cookies_attributes_(OTG-SESS-002)
-* http://code.google.com/p/browsersec/wiki/Part2#Same-origin_policy_for_cookies
-
-  
-#### CWE Id : 565
-  
-#### WASC Id : 15
   
 #### Source ID : 3
