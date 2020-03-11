@@ -788,7 +788,7 @@ Instances: 265
   
   
   
-* URL: [https://www.zaproxy.org/docs/desktop/releases/2.2.1/](https://www.zaproxy.org/docs/desktop/releases/2.2.1/)
+* URL: [https://www.zaproxy.org/faq/how-do-i-handle-a-false-positive/](https://www.zaproxy.org/faq/how-do-i-handle-a-false-positive/)
   
   
   * Method: `GET`
@@ -802,7 +802,7 @@ Instances: 265
   
   
   
-* URL: [https://www.zaproxy.org/faq/how-do-i-handle-a-false-positive/](https://www.zaproxy.org/faq/how-do-i-handle-a-false-positive/)
+* URL: [https://www.zaproxy.org/docs/desktop/releases/2.2.1/](https://www.zaproxy.org/docs/desktop/releases/2.2.1/)
   
   
   * Method: `GET`
@@ -1587,7 +1587,7 @@ Instances: 447
   
   
   
-* URL: [https://www.zaproxy.org/docs/desktop/start/features/anticsrf/](https://www.zaproxy.org/docs/desktop/start/features/anticsrf/)
+* URL: [https://www.zaproxy.org/faq/how-can-i-run-zap-with-a-high-dpi-display/](https://www.zaproxy.org/faq/how-can-i-run-zap-with-a-high-dpi-display/)
   
   
   * Method: `GET`
@@ -1595,7 +1595,7 @@ Instances: 447
   
   
   
-* URL: [https://www.zaproxy.org/faq/how-can-i-run-zap-with-a-high-dpi-display/](https://www.zaproxy.org/faq/how-can-i-run-zap-with-a-high-dpi-display/)
+* URL: [https://www.zaproxy.org/docs/desktop/start/features/anticsrf/](https://www.zaproxy.org/docs/desktop/start/features/anticsrf/)
   
   
   * Method: `GET`
@@ -1870,17 +1870,6 @@ Instances: 3
   
   
   
-* URL: [https://www.zaproxy.org/docs/api/](https://www.zaproxy.org/docs/api/)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `HIT`
-  
-  
-  
-  
 * URL: [https://www.zaproxy.org/docs/desktop/addons/ajax-spider/tab/](https://www.zaproxy.org/docs/desktop/addons/ajax-spider/tab/)
   
   
@@ -1910,6 +1899,17 @@ Instances: 3
   
   
   * Evidence: `Age: 0`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/blog/2015-12-15-zap-newsletter-2015-december/images/threadfix.png](https://www.zaproxy.org/blog/2015-12-15-zap-newsletter-2015-december/images/threadfix.png)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 234`
   
   
   
@@ -1980,6 +1980,17 @@ Instances: 3
   
   
   
+* URL: [https://www.zaproxy.org/docs/desktop/images/16/171.png](https://www.zaproxy.org/docs/desktop/images/16/171.png)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 237`
+  
+  
+  
+  
 * URL: [https://www.zaproxy.org/docs/desktop/addons/fuzzer/processors/](https://www.zaproxy.org/docs/desktop/addons/fuzzer/processors/)
   
   
@@ -1991,6 +2002,17 @@ Instances: 3
   
   
   
+* URL: [https://www.zaproxy.org/docs/desktop/images/16/break_add.png](https://www.zaproxy.org/docs/desktop/images/16/break_add.png)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 234`
+  
+  
+  
+  
 * URL: [https://www.zaproxy.org/faq/somethings-not-working-what-should-i-do/](https://www.zaproxy.org/faq/somethings-not-working-what-should-i-do/)
   
   
@@ -1998,6 +2020,17 @@ Instances: 3
   
   
   * Evidence: `Age: 0`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/docs/desktop/images/16/105.png](https://www.zaproxy.org/docs/desktop/images/16/105.png)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 234`
   
   
   
@@ -2046,40 +2079,7 @@ Instances: 3
   
   
   
-* URL: [https://www.zaproxy.org/docs/desktop/releases/1.0.0/](https://www.zaproxy.org/docs/desktop/releases/1.0.0/)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 0`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/docs/desktop/ui/dialogs/index.xml](https://www.zaproxy.org/docs/desktop/ui/dialogs/index.xml)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 0`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/docs/desktop/start/checks/](https://www.zaproxy.org/docs/desktop/start/checks/)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 0`
-  
-  
-  
-  
-Instances: 460
+Instances: 602
   
 ### Solution
 <p>Validate that the response does not contain sensitive, personal or user-specific information.  If it does, consider the use of the following HTTP response headers, to limit, or prevent the content being stored and retrieved from the cache by another user:</p><p>Cache-Control: no-cache, no-store, must-revalidate, private</p><p>Pragma: no-cache</p><p>Expires: 0</p><p>This configuration directs both HTTP 1.0 and HTTP 1.1 compliant caching servers to not store the response, and to not retrieve the response (without validation) from the cache, in response to a similar request.</p>
@@ -2362,7 +2362,7 @@ Instances: 492
   
   
   
-* URL: [https://www.zaproxy.org/robots.txt](https://www.zaproxy.org/robots.txt)
+* URL: [https://www.zaproxy.org/](https://www.zaproxy.org/)
   
   
   * Method: `GET`
@@ -2370,7 +2370,7 @@ Instances: 492
   
   
   
-* URL: [https://www.zaproxy.org/](https://www.zaproxy.org/)
+* URL: [https://www.zaproxy.org/robots.txt](https://www.zaproxy.org/robots.txt)
   
   
   * Method: `GET`
@@ -2392,7 +2392,7 @@ Instances: 3
 <p>Always scope cookies to a FQDN (Fully Qualified Domain Name).</p>
   
 ### Other information
-<p>The origin domain used for comparison was: </p><p>www.zaproxy.org</p><p>__cfduid=d1b735462bf0c9252d5d663488306d34b1583931050</p><p></p>
+<p>The origin domain used for comparison was: </p><p>www.zaproxy.org</p><p>__cfduid=dfd09bbde5274f954d0cc8763c707ad071583931282</p><p></p>
   
 ### Reference
 * https://tools.ietf.org/html/rfc6265#section-4.1
