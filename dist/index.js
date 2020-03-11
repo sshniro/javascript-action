@@ -77,17 +77,6 @@ async function run() {
 
         let jsonReportName = 'report_json.json';
 
-        console.log('workspace: ' + workspace);
-        console.log('token: ' + token);
-        console.log('repoName: ' + repoName);
-        console.log('zapWorkDir: ' + zapWorkDir);
-        console.log('branch: ' + branch);
-        console.log('md_report_name: ' + mdReportName);
-        console.log('zap_config_file_name: ' + zapYAMLFileName);
-        console.log('docker_name: ' + docker_name);
-        console.log('target: ' + target);
-        console.log('rulesFileName: ' + rulesFileName);
-
         octokit = new github.GitHub(token);
         context = github.context;
 
@@ -204,7 +193,7 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
         create_new_issue = true;
     }
 
-    let mdLink = "https://github.com/" + repoName + '/blob/' + branch + '/' + zapWorkDir + zapYAMLFileName;
+    let mdLink = `https://github.com/${repoName}/blob/${branch}/${zapWorkDir}/${zapYAMLFileName}`;
 
     if (create_new_issue) {
 
@@ -216,6 +205,8 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
             title: 'ZAP Scan Baseline Report',
             body: msg
         });
+        console.log(`Created a new issue #${newIssue.data.number} for the ZAP Scan.`);
+
         jsonReport.issue = newIssue.data.number;
 
         let yamlString = Buffer.from(yaml.safeDump(jsonReport)).toString("base64");
@@ -223,7 +214,7 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
 
         let upsertResponse = await createOrUpdateReportAndConfig(yamlString, reportString, zapYAMLFileName, mdReportName, zapWorkDir, repo, owner);
         if (upsertResponse.reportUpsertResult != null && upsertResponse.zapYAMLUpsertResult != null) {
-            console.log('process completed successfully!');
+            console.log(`Process completed successfully, and the new alerts have been reported in the issue ${newIssue.data.number}!`);
         }
     } else {
         let siteClone = actionHelper.generateDifference(jsonReport, configReport);
