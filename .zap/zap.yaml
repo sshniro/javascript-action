@@ -1,5 +1,5 @@
 '@version': 2.9.0
-'@generated': 'Wed, 11 Mar 2020 11:58:47'
+'@generated': 'Wed, 11 Mar 2020 12:02:36'
 site:
   - '@name': 'https://www.zaproxy.org'
     '@host': www.zaproxy.org
@@ -207,6 +207,17 @@ site:
             method: GET
             evidence: 'Age: 0'
           - uri: >-
+              https://www.zaproxy.org/blog/2016-01-04-zap-newsletter-2016-january/images/zap-xcold-8.png
+            method: GET
+            evidence: 'Age: 226'
+          - uri: >-
+              https://www.zaproxy.org/blog/2016-01-04-zap-newsletter-2016-january/images/shodan1.png
+            method: GET
+            evidence: 'Age: 226'
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/fugue/ui-tab-hide.png'
+            method: GET
+            evidence: 'Age: 220'
+          - uri: >-
               https://www.zaproxy.org/docs/desktop/addons/authentication-statistics/index.xml
             method: GET
             evidence: 'Age: 0'
@@ -221,6 +232,14 @@ site:
               https://www.zaproxy.org/docs/desktop/start/features/authentication/
             method: GET
             evidence: 'Age: 0'
+          - uri: >-
+              https://www.zaproxy.org/docs/desktop/addons/websockets/images/054.png
+            method: GET
+            evidence: 'Age: 223'
+          - uri: >-
+              https://www.zaproxy.org/blog/2016-02-19-zap-newsletter-2016-february/images/Context-session-props.png
+            method: GET
+            evidence: 'Age: 227'
           - uri: 'https://www.zaproxy.org/docs/guides/zapping-the-top-10/'
             method: GET
             evidence: 'Age: 0'
@@ -235,35 +254,22 @@ site:
             method: GET
             evidence: 'Age: 0'
           - uri: >-
+              https://www.zaproxy.org/blog/2015-12-15-zap-newsletter-2015-december/images/custom-http-breakpoint.png
+            method: GET
+            evidence: 'Age: 224'
+          - uri: >-
               https://www.zaproxy.org/faq/somethings-not-working-what-should-i-do/
             method: GET
             evidence: 'Age: 0'
           - uri: >-
+              https://www.zaproxy.org/getting-started/images/browser-network-proxy.png
+            method: GET
+            evidence: 'Age: 228'
+          - uri: >-
               https://www.zaproxy.org/docs/desktop/ui/dialogs/session/context-struct/
             method: GET
             evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/releases/2.1.0/'
-            method: GET
-            evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/addons/websockets/api/'
-            method: GET
-            evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/ui/tabs/httpsessions/'
-            method: GET
-            evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/releases/1.0.0/'
-            method: GET
-            evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/ui/dialogs/index.xml'
-            method: GET
-            evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/start/checks/'
-            method: GET
-            evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/start/features/stats/'
-            method: GET
-            evidence: 'Age: 0'
-        count: '450'
+        count: '613'
         solution: >-
           <p>Validate that the response does not contain sensitive, personal or
           user-specific information.  If it does, consider the use of the
@@ -367,13 +373,13 @@ site:
             evidence: >-
               <script
               src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.6/lunr.min.js"></script>
-          - uri: 'https://www.zaproxy.org/docs/desktop/releases/2.2.1/'
+          - uri: 'https://www.zaproxy.org/faq/how-do-i-handle-a-false-positive/'
             method: GET
             param: 'https://www.googletagmanager.com/gtag/js?id=UA-71455536-1'
             evidence: >-
               <script async
               src="https://www.googletagmanager.com/gtag/js?id=UA-71455536-1"></script>
-          - uri: 'https://www.zaproxy.org/faq/how-do-i-handle-a-false-positive/'
+          - uri: 'https://www.zaproxy.org/docs/desktop/releases/2.2.1/'
             method: GET
             param: 'https://www.googletagmanager.com/gtag/js?id=UA-71455536-1'
             evidence: >-
@@ -790,41 +796,6 @@ site:
         reference: >-
           <p>https://developer.mozilla.org/en-US/docs/Web/Security/CSP/Introducing_Content_Security_Policy</p><p>https://www.owasp.org/index.php/Content_Security_Policy</p><p>http://www.w3.org/TR/CSP/</p><p>http://w3c.github.io/webappsec/specs/content-security-policy/csp-specification.dev.html</p><p>http://www.html5rocks.com/en/tutorials/security/content-security-policy/</p><p>http://caniuse.com/#feat=contentsecuritypolicy</p><p>http://content-security-policy.com/</p>
         cweid: '16'
-        wascid: '15'
-        sourceid: '3'
-      - pluginid: '90033'
-        alert: Loosely Scoped Cookie
-        name: Loosely Scoped Cookie
-        riskcode: '0'
-        confidence: '1'
-        riskdesc: Informational (Low)
-        desc: >-
-          <p>Cookies can be scoped by domain or path. This check is only
-          concerned with domain scope.The domain scope applied to a cookie
-          determines which domains can access it. For example, a cookie can be
-          scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely
-          scoped to a parent domain e.g. nottrusted.com. In the latter case, any
-          subdomain of nottrusted.com can access the cookie. Loosely scoped
-          cookies are common in mega-applications like google.com and live.com.
-          Cookies set from a subdomain like app.foo.bar are transmitted only to
-          that domain by the browser. However, cookies scoped to a parent-level
-          domain may be transmitted to the parent, or any subdomain of the
-          parent.</p>
-        instances:
-          - uri: 'https://www.zaproxy.org/robots.txt'
-            method: GET
-          - uri: 'https://www.zaproxy.org/'
-            method: GET
-          - uri: 'https://www.zaproxy.org/'
-            method: GET
-        count: '3'
-        solution: <p>Always scope cookies to a FQDN (Fully Qualified Domain Name).</p>
-        otherinfo: >-
-          <p>The origin domain used for comparison was:
-          </p><p>www.zaproxy.org</p><p>__cfduid=db31c1600412f0a32f03a25a1ba540c6f1583927883</p><p></p>
-        reference: >-
-          <p>https://tools.ietf.org/html/rfc6265#section-4.1</p><p>https://www.owasp.org/index.php/Testing_for_cookies_attributes_(OTG-SESS-002)</p><p>http://code.google.com/p/browsersec/wiki/Part2#Same-origin_policy_for_cookies</p>
-        cweid: '565'
         wascid: '15'
         sourceid: '3'
       - pluginid: '90022'
@@ -1335,4 +1306,39 @@ site:
         cweid: '359'
         wascid: '13'
         sourceid: '3'
-issue: 31
+      - pluginid: '90033'
+        alert: Loosely Scoped Cookie
+        name: Loosely Scoped Cookie
+        riskcode: '0'
+        confidence: '1'
+        riskdesc: Informational (Low)
+        desc: >-
+          <p>Cookies can be scoped by domain or path. This check is only
+          concerned with domain scope.The domain scope applied to a cookie
+          determines which domains can access it. For example, a cookie can be
+          scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely
+          scoped to a parent domain e.g. nottrusted.com. In the latter case, any
+          subdomain of nottrusted.com can access the cookie. Loosely scoped
+          cookies are common in mega-applications like google.com and live.com.
+          Cookies set from a subdomain like app.foo.bar are transmitted only to
+          that domain by the browser. However, cookies scoped to a parent-level
+          domain may be transmitted to the parent, or any subdomain of the
+          parent.</p>
+        instances:
+          - uri: 'https://www.zaproxy.org/'
+            method: GET
+          - uri: 'https://www.zaproxy.org/robots.txt'
+            method: GET
+          - uri: 'https://www.zaproxy.org/'
+            method: GET
+        count: '3'
+        solution: <p>Always scope cookies to a FQDN (Fully Qualified Domain Name).</p>
+        otherinfo: >-
+          <p>The origin domain used for comparison was:
+          </p><p>www.zaproxy.org</p><p>__cfduid=de36ec86bec31fa655a79485465e162901583928109</p><p></p>
+        reference: >-
+          <p>https://tools.ietf.org/html/rfc6265#section-4.1</p><p>https://www.owasp.org/index.php/Testing_for_cookies_attributes_(OTG-SESS-002)</p><p>http://code.google.com/p/browsersec/wiki/Part2#Same-origin_policy_for_cookies</p>
+        cweid: '565'
+        wascid: '15'
+        sourceid: '3'
+issue: 32
