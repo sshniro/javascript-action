@@ -788,7 +788,7 @@ Instances: 265
   
   
   
-* URL: [https://www.zaproxy.org/docs/desktop/releases/2.2.1/](https://www.zaproxy.org/docs/desktop/releases/2.2.1/)
+* URL: [https://www.zaproxy.org/faq/how-do-i-handle-a-false-positive/](https://www.zaproxy.org/faq/how-do-i-handle-a-false-positive/)
   
   
   * Method: `GET`
@@ -802,7 +802,7 @@ Instances: 265
   
   
   
-* URL: [https://www.zaproxy.org/faq/how-do-i-handle-a-false-positive/](https://www.zaproxy.org/faq/how-do-i-handle-a-false-positive/)
+* URL: [https://www.zaproxy.org/docs/desktop/releases/2.2.1/](https://www.zaproxy.org/docs/desktop/releases/2.2.1/)
   
   
   * Method: `GET`
@@ -1892,6 +1892,39 @@ Instances: 3
   
   
   
+* URL: [https://www.zaproxy.org/blog/2016-01-04-zap-newsletter-2016-january/images/zap-xcold-8.png](https://www.zaproxy.org/blog/2016-01-04-zap-newsletter-2016-january/images/zap-xcold-8.png)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 226`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/blog/2016-01-04-zap-newsletter-2016-january/images/shodan1.png](https://www.zaproxy.org/blog/2016-01-04-zap-newsletter-2016-january/images/shodan1.png)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 226`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/docs/desktop/images/fugue/ui-tab-hide.png](https://www.zaproxy.org/docs/desktop/images/fugue/ui-tab-hide.png)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 220`
+  
+  
+  
+  
 * URL: [https://www.zaproxy.org/docs/desktop/addons/authentication-statistics/index.xml](https://www.zaproxy.org/docs/desktop/addons/authentication-statistics/index.xml)
   
   
@@ -1932,6 +1965,28 @@ Instances: 3
   
   
   * Evidence: `Age: 0`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/docs/desktop/addons/websockets/images/054.png](https://www.zaproxy.org/docs/desktop/addons/websockets/images/054.png)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 223`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/blog/2016-02-19-zap-newsletter-2016-february/images/Context-session-props.png](https://www.zaproxy.org/blog/2016-02-19-zap-newsletter-2016-february/images/Context-session-props.png)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 227`
   
   
   
@@ -1980,6 +2035,17 @@ Instances: 3
   
   
   
+* URL: [https://www.zaproxy.org/blog/2015-12-15-zap-newsletter-2015-december/images/custom-http-breakpoint.png](https://www.zaproxy.org/blog/2015-12-15-zap-newsletter-2015-december/images/custom-http-breakpoint.png)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 224`
+  
+  
+  
+  
 * URL: [https://www.zaproxy.org/faq/somethings-not-working-what-should-i-do/](https://www.zaproxy.org/faq/somethings-not-working-what-should-i-do/)
   
   
@@ -1987,6 +2053,17 @@ Instances: 3
   
   
   * Evidence: `Age: 0`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/getting-started/images/browser-network-proxy.png](https://www.zaproxy.org/getting-started/images/browser-network-proxy.png)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 228`
   
   
   
@@ -2002,84 +2079,7 @@ Instances: 3
   
   
   
-* URL: [https://www.zaproxy.org/docs/desktop/releases/2.1.0/](https://www.zaproxy.org/docs/desktop/releases/2.1.0/)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 0`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/docs/desktop/addons/websockets/api/](https://www.zaproxy.org/docs/desktop/addons/websockets/api/)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 0`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/docs/desktop/ui/tabs/httpsessions/](https://www.zaproxy.org/docs/desktop/ui/tabs/httpsessions/)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 0`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/docs/desktop/releases/1.0.0/](https://www.zaproxy.org/docs/desktop/releases/1.0.0/)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 0`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/docs/desktop/ui/dialogs/index.xml](https://www.zaproxy.org/docs/desktop/ui/dialogs/index.xml)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 0`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/docs/desktop/start/checks/](https://www.zaproxy.org/docs/desktop/start/checks/)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 0`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/docs/desktop/start/features/stats/](https://www.zaproxy.org/docs/desktop/start/features/stats/)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 0`
-  
-  
-  
-  
-Instances: 450
+Instances: 613
   
 ### Solution
 <p>Validate that the response does not contain sensitive, personal or user-specific information.  If it does, consider the use of the following HTTP response headers, to limit, or prevent the content being stored and retrieved from the cache by another user:</p><p>Cache-Control: no-cache, no-store, must-revalidate, private</p><p>Pragma: no-cache</p><p>Expires: 0</p><p>This configuration directs both HTTP 1.0 and HTTP 1.1 compliant caching servers to not store the response, and to not retrieve the response (without validation) from the cache, in response to a similar request.</p>
@@ -2351,64 +2351,6 @@ Instances: 492
   
   
   
-### Loosely Scoped Cookie
-##### Informational (Low)
-  
-  
-  
-  
-#### Description
-<p>Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com. Cookies set from a subdomain like app.foo.bar are transmitted only to that domain by the browser. However, cookies scoped to a parent-level domain may be transmitted to the parent, or any subdomain of the parent.</p>
-  
-  
-  
-* URL: [https://www.zaproxy.org/robots.txt](https://www.zaproxy.org/robots.txt)
-  
-  
-  * Method: `GET`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/](https://www.zaproxy.org/)
-  
-  
-  * Method: `GET`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/](https://www.zaproxy.org/)
-  
-  
-  * Method: `GET`
-  
-  
-  
-  
-Instances: 3
-  
-### Solution
-<p>Always scope cookies to a FQDN (Fully Qualified Domain Name).</p>
-  
-### Other information
-<p>The origin domain used for comparison was: </p><p>www.zaproxy.org</p><p>__cfduid=db31c1600412f0a32f03a25a1ba540c6f1583927883</p><p></p>
-  
-### Reference
-* https://tools.ietf.org/html/rfc6265#section-4.1
-* https://www.owasp.org/index.php/Testing_for_cookies_attributes_(OTG-SESS-002)
-* http://code.google.com/p/browsersec/wiki/Part2#Same-origin_policy_for_cookies
-
-  
-#### CWE Id : 565
-  
-#### WASC Id : 15
-  
-#### Source ID : 3
-
-  
-  
-  
 ### Information Disclosure - Suspicious Comments
 ##### Informational (Low)
   
@@ -2467,5 +2409,63 @@ Instances: 4
 #### CWE Id : 200
   
 #### WASC Id : 13
+  
+#### Source ID : 3
+
+  
+  
+  
+### Loosely Scoped Cookie
+##### Informational (Low)
+  
+  
+  
+  
+#### Description
+<p>Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com. Cookies set from a subdomain like app.foo.bar are transmitted only to that domain by the browser. However, cookies scoped to a parent-level domain may be transmitted to the parent, or any subdomain of the parent.</p>
+  
+  
+  
+* URL: [https://www.zaproxy.org/](https://www.zaproxy.org/)
+  
+  
+  * Method: `GET`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/robots.txt](https://www.zaproxy.org/robots.txt)
+  
+  
+  * Method: `GET`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/](https://www.zaproxy.org/)
+  
+  
+  * Method: `GET`
+  
+  
+  
+  
+Instances: 3
+  
+### Solution
+<p>Always scope cookies to a FQDN (Fully Qualified Domain Name).</p>
+  
+### Other information
+<p>The origin domain used for comparison was: </p><p>www.zaproxy.org</p><p>__cfduid=de36ec86bec31fa655a79485465e162901583928109</p><p></p>
+  
+### Reference
+* https://tools.ietf.org/html/rfc6265#section-4.1
+* https://www.owasp.org/index.php/Testing_for_cookies_attributes_(OTG-SESS-002)
+* http://code.google.com/p/browsersec/wiki/Part2#Same-origin_policy_for_cookies
+
+  
+#### CWE Id : 565
+  
+#### WASC Id : 15
   
 #### Source ID : 3
