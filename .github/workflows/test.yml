@@ -22,4 +22,4 @@ jobs:
           zap_conf_file_name: 'zap.yaml'
           docker_name: 'owasp/zap2docker-stable'
           target: 'https://www.zaproxy.org/'
-          rules_file_name: 'rules.tsv'
+#          rules_file_name: 'rules.tsv'

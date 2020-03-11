@@ -65,7 +65,10 @@ let actionHelper = {
 
             msg = msg + NXT_LINE
         }));
-        return msg + NXT_LINE + `View the following [report](${mdLink}) for further analysis.`;
+        if (msg.trim() !== '') {
+            msg = msg + NXT_LINE + `View the following [report](${mdLink}) for further analysis.`;
+        }
+        return msg
     }),
 
     generateDifference: ((newReport, oldReport) => {
@@ -120,9 +123,14 @@ let actionHelper = {
     filterReport: (async (jsonReport, plugins)=>{
         jsonReport.site.forEach((s) => {
             if (s.hasOwnProperty('alerts') && s.alerts.length !== 0) {
-                s.alerts = s.alerts.filter(function(e) {
+                let newAlerts = s.alerts.filter(function(e) {
                     return !plugins.includes(e.pluginid)
                 });
+                let removedAlerts = s.alerts.filter(function(e) {
+                    return plugins.includes(e.pluginid)
+                });
+                s.alerts = newAlerts;
+                s.ignoredAlerts = removedAlerts;
             }
         });
         return jsonReport;

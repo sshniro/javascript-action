@@ -181,6 +181,8 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
                 });
                 console.log(`The issue #${issue.data.number} has been updated with the latest ZAP Scan!`);
 
+                originalReport.issue = issue.data.number;
+
                 let yamlString = Buffer.from(yaml.safeDump(originalReport)).toString("base64");
                 let reportString = await actionHelper.readMDFile(`${workSpace}/${mdReportName}`);
 
