@@ -55,7 +55,7 @@ const yaml = __webpack_require__(113)
 const github = __webpack_require__(558);
 const _ = __webpack_require__(38);
 
-__webpack_require__(436).fillEnvironmentVariables();
+// require('./dev-helper').fillEnvironmentVariables();
 const actionHelper = __webpack_require__(450);
 
 let octokit;
@@ -24704,88 +24704,6 @@ function isexe (path, options, cb) {
 function sync (path, options) {
   return checkStat(fs.statSync(path), path, options)
 }
-
-
-/***/ }),
-
-/***/ 436:
-/***/ (function(module) {
-
-let helper = {
-    fillEnvironmentVariables: (() => {
-        process.env['INPUT_WORKSPACE'] = '/home/nirojan/za/javascript-action';
-        process.env['INPUT_TOKEN'] = 'b3dab5911a51dee4441abcc2cd6987ed858b2a93';
-        process.env['INPUT_REPO_NAME'] = 'sshniro/javascript-action';
-        process.env['INPUT_ZAP_WORK_DIR'] = '.zap';
-        process.env['INPUT_BRANCH'] = 'master';
-        process.env['INPUT_REPORT_NAME'] = 'report_md.md';
-        process.env['INPUT_ZAP_CONF_FILE_NAME'] = 'zap.yaml';
-        process.env['INPUT_DOCKER_NAME'] = 'owasp/zap2docker-stable';
-        process.env['INPUT_TARGET'] = 'https://www.example.com/';
-        process.env['INPUT_RULES_FILE_NAME'] = 'rules.tsv';
-    })
-};
-
-module.exports = helper;
-
-
-// previousInstances.forEach(preObj => {
-//     const found = newInstances.find((newObj) => {
-//         return JSON.stringify(newObj) === JSON.stringify(preObj)
-//     });
-//     if (!found) {
-//         removeCount++;
-//     }
-// });
-//
-// newInstances.forEach(newObj => {
-//     const found = previousInstances.find(prevObj => JSON.stringify(prevObj) === JSON.stringify(newObj));
-//     if (!found) {
-//         addCount++;
-//     }
-// });
-
-
-
-// existingAlerts.forEach((existing) => {
-//     let prevAl = _.find(previousAlerts, {pluginid: existing.pluginid});
-//     let newAl = _.find(alerts, {pluginid: existing.pluginid});
-//
-//     let previousInstances = prevAl['instances'];
-//     let newInstances = newAl['instances'];
-//
-//     let removeCount = 0;
-//     let addCount = 0;
-    //
-    // define which items can be considered equal
-    // const isEqual = (a, b) => a.uri === b.uri && a.method === b.method;
-    // find out amount of common items between two arrays
-    // (the ones that haven't been added nor removed)
-    // const commonItemsLength = newInstances.filter(newItem => previousInstances.find(prevItem => isEqual(newItem, prevItem))).length;
-    //
-    // subtract common items length from each arrays length
-    // let removeCount = previousInstances.length - commonItemsLength;
-    // let addCount = newInstances.length - commonItemsLength;
-    //
-    // if (removeCount !== 0 || addCount !== 0) {
-    //     newAl.removed = removeCount;
-    //     newAl.added = addCount;
-    //     updatedAlerts.push(newAl);
-    // }
-//
-// });
-
-
-// console.log('workspace: ' + workspace);
-// console.log('token: ' + token);
-// console.log('repoName: ' + repoName);
-// console.log('zapWorkDir: ' + zapWorkDir);
-// console.log('branch: ' + branch);
-// console.log('md_report_name: ' + mdReportName);
-// console.log('zap_config_file_name: ' + zapYAMLFileName);
-// console.log('docker_name: ' + docker_name);
-// console.log('target: ' + target);
-// console.log('rulesFileName: ' + rulesFileName);
 
 
 /***/ }),

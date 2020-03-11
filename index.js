@@ -5,7 +5,7 @@ const yaml = require('js-yaml')
 const github = require('@actions/github');
 const _ = require('lodash');
 
-require('./dev-helper').fillEnvironmentVariables();
+// require('./dev-helper').fillEnvironmentVariables();
 const actionHelper = require('./action-helper');
 
 let octokit;
