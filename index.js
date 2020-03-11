@@ -105,6 +105,7 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
 
     originalReport = JSON.parse(JSON.stringify(jsonReport));
     if (plugins.length !== 0) {
+        console.log(`${plugins.length} plugins will be ignored according to the rules configuration`);
         jsonReport = await actionHelper.filterReport(jsonReport, plugins);
         configReport = await actionHelper.filterReport(configReport, plugins);
     }
@@ -113,6 +114,7 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
 
     if (!newAlertExits) {
         // If no new alerts have been found close the issue
+        console.log('No new alerts have been identified by the ZAP Scan');
         if (issue != null && issue.data.state === 'open') {
             // close the issue with comment
             try{
