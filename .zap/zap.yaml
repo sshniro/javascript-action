@@ -1,11 +1,184 @@
 '@version': 2.9.0
-'@generated': 'Wed, 11 Mar 2020 12:51:35'
+'@generated': 'Wed, 11 Mar 2020 12:55:24'
 site:
   - '@name': 'https://www.zaproxy.org'
     '@host': www.zaproxy.org
     '@port': '443'
     '@ssl': 'true'
     alerts:
+      - pluginid: '10035'
+        alert: Strict-Transport-Security Header Not Set
+        name: Strict-Transport-Security Header Not Set
+        riskcode: '1'
+        confidence: '3'
+        riskdesc: Low (High)
+        desc: >-
+          <p>HTTP Strict Transport Security (HSTS) is a web security policy
+          mechanism whereby a web server declares that complying user agents
+          (such as a web browser) are to interact with it using only secure
+          HTTPS connections (i.e. HTTP layered over TLS/SSL). HSTS is an IETF
+          standards track protocol and is specified in RFC 6797.</p>
+        instances:
+          - uri: >-
+              https://www.zaproxy.org/blog/2016-02-19-zap-newsletter-2016-february/images/image05.png
+            method: GET
+          - uri: 'https://www.zaproxy.org/faq/index.xml'
+            method: GET
+          - uri: >-
+              https://www.zaproxy.org/docs/desktop/addons/form-handler/images/formHandlerTable.PNG
+            method: GET
+          - uri: 'https://www.zaproxy.org/docs/desktop/addons/hud/index.xml'
+            method: GET
+          - uri: >-
+              https://www.zaproxy.org/docs/desktop/addons/websockets/images/106.png
+            method: GET
+          - uri: 'https://www.zaproxy.org/img/faq/installedAddonVersion.png'
+            method: GET
+          - uri: >-
+              https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/index.xml
+            method: GET
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/10/137.png'
+            method: GET
+          - uri: >-
+              https://www.zaproxy.org/docs/desktop/addons/linux-webdrivers/index.xml
+            method: GET
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/fugue/ui-tab-show.png'
+            method: GET
+          - uri: >-
+              https://www.zaproxy.org/docs/desktop/addons/technology-detection/index.xml
+            method: GET
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/16/149.png'
+            method: GET
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/16/142.png'
+            method: GET
+          - uri: >-
+              https://www.zaproxy.org/blog/2016-02-19-zap-newsletter-2016-february/images/Johanna.jpg
+            method: GET
+          - uri: 'https://www.zaproxy.org/img/addons/source.png'
+            method: GET
+          - uri: >-
+              https://www.zaproxy.org/blog/2016-01-04-zap-newsletter-2016-january/images/zapbot.png
+            method: GET
+          - uri: 'https://www.zaproxy.org/docs/desktop/addons/requester/index.xml'
+            method: GET
+          - uri: >-
+              https://www.zaproxy.org/docs/desktop/addons/export-report/images/json.png
+            method: GET
+          - uri: >-
+              https://www.zaproxy.org/docs/desktop/addons/fuzzdb-web-backdoors/index.xml
+            method: GET
+          - uri: 'https://www.zaproxy.org/docs/desktop/addons/birt-reports/index.xml'
+            method: GET
+        count: '265'
+        solution: >-
+          <p>Ensure that your web server, application server, load balancer,
+          etc. is configured to enforce Strict-Transport-Security.</p>
+        reference: >-
+          <p>https://www.owasp.org/index.php/HTTP_Strict_Transport_Security</p><p>https://www.owasp.org/index.php/List_of_useful_HTTP_headers</p><p>http://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security</p><p>http://caniuse.com/stricttransportsecurity</p><p>http://tools.ietf.org/html/rfc6797</p>
+        cweid: '16'
+        wascid: '15'
+        sourceid: '3'
+      - pluginid: '10098'
+        alert: Cross-Domain Misconfiguration
+        name: Cross-Domain Misconfiguration
+        riskcode: '2'
+        confidence: '2'
+        riskdesc: Medium (Medium)
+        desc: >-
+          <p>Web browser data loading may be possible, due to a Cross Origin
+          Resource Sharing (CORS) misconfiguration on the web server</p>
+        instances:
+          - uri: 'https://www.zaproxy.org/img/faq/supportAddonVersion.png'
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: >-
+              https://www.zaproxy.org/docs/desktop/addons/websockets/images/105.png
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: >-
+              https://www.zaproxy.org/blog/2020-03-04-dark-mode-in-the-weekly-release/images/zap-dark-desktop.png
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: >-
+              https://www.zaproxy.org/docs/desktop/images/fugue/forcedUserOff.png
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: 'https://www.zaproxy.org/getting-started/images/alert-icons.png'
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: 'https://www.zaproxy.org/index.xml'
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: >-
+              https://www.zaproxy.org/blog/2016-02-19-zap-newsletter-2016-february/images/Contexts1.png
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: >-
+              https://www.zaproxy.org/blog/2015-12-15-zap-newsletter-2015-december/images/custom-http-breakpoint.png
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: 'https://www.zaproxy.org/docs/desktop/addons/fuzzdb-files/index.xml'
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: >-
+              https://www.zaproxy.org/docs/desktop/addons/access-control-testing/index.xml
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/16/141.png'
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/16/094.png'
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: >-
+              https://www.zaproxy.org/blog/2016-02-19-zap-newsletter-2016-february/images/image04.png
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: 'https://www.zaproxy.org/docs/desktop/addons/json-view/index.xml'
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: >-
+              https://www.zaproxy.org/docs/desktop/addons/export-report/images/pdf.png
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: >-
+              https://www.zaproxy.org/docs/desktop/images/fugue/application-blue-export.png
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/16/076.png'
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: 'https://www.zaproxy.org/main.7d9e3.css'
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: 'https://www.zaproxy.org/docs/desktop/addons/replacer/index.xml'
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+          - uri: 'https://www.zaproxy.org/docs/desktop/addons/browser-view/index.xml'
+            method: GET
+            evidence: 'Access-Control-Allow-Origin: *'
+        count: '259'
+        solution: >-
+          <p>Ensure that sensitive data is not available in an unauthenticated
+          manner (using IP address white-listing, for instance).</p><p>Configure
+          the "Access-Control-Allow-Origin" HTTP header to a more restrictive
+          set of domains, or remove all CORS headers entirely, to allow the web
+          browser to enforce the Same Origin Policy (SOP) in a more restrictive
+          manner.</p>
+        otherinfo: >-
+          <p>The CORS misconfiguration on the web server permits cross-domain
+          read requests from arbitrary third party domains, using
+          unauthenticated APIs on this domain. Web browser implementations do
+          not permit arbitrary third parties to read the response from
+          authenticated APIs, however. This reduces the risk somewhat. This
+          misconfiguration could be used by an attacker to access data that is
+          available in an unauthenticated manner, but which uses some other form
+          of security, such as IP address white-listing.</p>
+        reference: >-
+          <p>http://www.hpenterprisesecurity.com/vulncat/en/vulncat/vb/html5_overly_permissive_cors_policy.html</p>
+        cweid: '264'
+        wascid: '14'
+        sourceid: '3'
       - pluginid: '10050'
         alert: Retrieved from Cache
         name: Retrieved from Cache
@@ -27,9 +200,6 @@ site:
               https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules-alpha/index.xml
             method: GET
             evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/api/'
-            method: GET
-            evidence: HIT
           - uri: 'https://www.zaproxy.org/docs/desktop/addons/ajax-spider/tab/'
             method: GET
             evidence: 'Age: 0'
@@ -40,6 +210,10 @@ site:
               https://www.zaproxy.org/docs/desktop/addons/authentication-statistics/index.xml
             method: GET
             evidence: 'Age: 0'
+          - uri: >-
+              https://www.zaproxy.org/blog/2015-12-15-zap-newsletter-2015-december/images/threadfix.png
+            method: GET
+            evidence: 'Age: 234'
           - uri: >-
               https://www.zaproxy.org/docs/desktop/addons/plug-n-hack/clientstab/
             method: GET
@@ -61,13 +235,22 @@ site:
               https://www.zaproxy.org/faq/how-do-you-configure-zap-to-test-an-application-on-localhost/
             method: GET
             evidence: 'Age: 0'
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/16/171.png'
+            method: GET
+            evidence: 'Age: 237'
           - uri: 'https://www.zaproxy.org/docs/desktop/addons/fuzzer/processors/'
             method: GET
             evidence: 'Age: 0'
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/16/break_add.png'
+            method: GET
+            evidence: 'Age: 234'
           - uri: >-
               https://www.zaproxy.org/faq/somethings-not-working-what-should-i-do/
             method: GET
             evidence: 'Age: 0'
+          - uri: 'https://www.zaproxy.org/docs/desktop/images/16/105.png'
+            method: GET
+            evidence: 'Age: 234'
           - uri: >-
               https://www.zaproxy.org/docs/desktop/ui/dialogs/session/context-struct/
             method: GET
@@ -81,16 +264,7 @@ site:
           - uri: 'https://www.zaproxy.org/docs/desktop/ui/tabs/httpsessions/'
             method: GET
             evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/releases/1.0.0/'
-            method: GET
-            evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/ui/dialogs/index.xml'
-            method: GET
-            evidence: 'Age: 0'
-          - uri: 'https://www.zaproxy.org/docs/desktop/start/checks/'
-            method: GET
-            evidence: 'Age: 0'
-        count: '460'
+        count: '602'
         solution: >-
           <p>Validate that the response does not contain sensitive, personal or
           user-specific information.  If it does, consider the use of the
@@ -194,13 +368,13 @@ site:
             evidence: >-
               <script
               src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.6/lunr.min.js"></script>
-          - uri: 'https://www.zaproxy.org/docs/desktop/releases/2.2.1/'
+          - uri: 'https://www.zaproxy.org/faq/how-do-i-handle-a-false-positive/'
             method: GET
             param: 'https://www.googletagmanager.com/gtag/js?id=UA-71455536-1'
             evidence: >-
               <script async
               src="https://www.googletagmanager.com/gtag/js?id=UA-71455536-1"></script>
-          - uri: 'https://www.zaproxy.org/faq/how-do-i-handle-a-false-positive/'
+          - uri: 'https://www.zaproxy.org/docs/desktop/releases/2.2.1/'
             method: GET
             param: 'https://www.googletagmanager.com/gtag/js?id=UA-71455536-1'
             evidence: >-
@@ -588,10 +762,10 @@ site:
             method: GET
           - uri: 'https://www.zaproxy.org/docs/desktop/ui/dialogs/session/'
             method: GET
-          - uri: 'https://www.zaproxy.org/docs/desktop/start/features/anticsrf/'
-            method: GET
           - uri: >-
               https://www.zaproxy.org/faq/how-can-i-run-zap-with-a-high-dpi-display/
+            method: GET
+          - uri: 'https://www.zaproxy.org/docs/desktop/start/features/anticsrf/'
             method: GET
           - uri: 'https://www.zaproxy.org/faq/'
             method: GET
@@ -638,9 +812,9 @@ site:
           domain may be transmitted to the parent, or any subdomain of the
           parent.</p>
         instances:
-          - uri: 'https://www.zaproxy.org/robots.txt'
-            method: GET
           - uri: 'https://www.zaproxy.org/'
+            method: GET
+          - uri: 'https://www.zaproxy.org/robots.txt'
             method: GET
           - uri: 'https://www.zaproxy.org/'
             method: GET
@@ -648,7 +822,7 @@ site:
         solution: <p>Always scope cookies to a FQDN (Fully Qualified Domain Name).</p>
         otherinfo: >-
           <p>The origin domain used for comparison was:
-          </p><p>www.zaproxy.org</p><p>__cfduid=d1b735462bf0c9252d5d663488306d34b1583931050</p><p></p>
+          </p><p>www.zaproxy.org</p><p>__cfduid=dfd09bbde5274f954d0cc8763c707ad071583931282</p><p></p>
         reference: >-
           <p>https://tools.ietf.org/html/rfc6265#section-4.1</p><p>https://www.owasp.org/index.php/Testing_for_cookies_attributes_(OTG-SESS-002)</p><p>http://code.google.com/p/browsersec/wiki/Part2#Same-origin_policy_for_cookies</p>
         cweid: '565'
