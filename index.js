@@ -5,7 +5,7 @@ const yaml = require('js-yaml')
 const github = require('@actions/github');
 const _ = require('lodash');
 
-// require('./dev-helper').fillEnvironmentVariables();
+require('./dev-helper').fillEnvironmentVariables();
 const actionHelper = require('./action-helper');
 
 let octokit;
@@ -111,6 +111,8 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
     }
     let newAlertExits = actionHelper.checkIfAlertsExists(jsonReport);
     let prevAlertExits = actionHelper.checkIfAlertsExists(jsonReport);
+
+    console.log(`New alerts exists: ${newAlertExits} , prevAlertsExits ${prevAlertExits}`);
 
     if (!newAlertExits) {
         // If no new alerts have been found close the issue
