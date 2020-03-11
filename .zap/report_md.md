@@ -1587,7 +1587,7 @@ Instances: 447
   
   
   
-* URL: [https://www.zaproxy.org/docs/desktop/start/features/anticsrf/](https://www.zaproxy.org/docs/desktop/start/features/anticsrf/)
+* URL: [https://www.zaproxy.org/faq/how-can-i-run-zap-with-a-high-dpi-display/](https://www.zaproxy.org/faq/how-can-i-run-zap-with-a-high-dpi-display/)
   
   
   * Method: `GET`
@@ -1595,7 +1595,7 @@ Instances: 447
   
   
   
-* URL: [https://www.zaproxy.org/faq/how-can-i-run-zap-with-a-high-dpi-display/](https://www.zaproxy.org/faq/how-can-i-run-zap-with-a-high-dpi-display/)
+* URL: [https://www.zaproxy.org/docs/desktop/start/features/anticsrf/](https://www.zaproxy.org/docs/desktop/start/features/anticsrf/)
   
   
   * Method: `GET`
@@ -1892,39 +1892,6 @@ Instances: 3
   
   
   
-* URL: [https://www.zaproxy.org/blog/2016-01-04-zap-newsletter-2016-january/images/zap-xcold-8.png](https://www.zaproxy.org/blog/2016-01-04-zap-newsletter-2016-january/images/zap-xcold-8.png)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 226`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/blog/2016-01-04-zap-newsletter-2016-january/images/shodan1.png](https://www.zaproxy.org/blog/2016-01-04-zap-newsletter-2016-january/images/shodan1.png)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 226`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/docs/desktop/images/fugue/ui-tab-hide.png](https://www.zaproxy.org/docs/desktop/images/fugue/ui-tab-hide.png)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 220`
-  
-  
-  
-  
 * URL: [https://www.zaproxy.org/docs/desktop/addons/authentication-statistics/index.xml](https://www.zaproxy.org/docs/desktop/addons/authentication-statistics/index.xml)
   
   
@@ -1969,28 +1936,6 @@ Instances: 3
   
   
   
-* URL: [https://www.zaproxy.org/docs/desktop/addons/websockets/images/054.png](https://www.zaproxy.org/docs/desktop/addons/websockets/images/054.png)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 223`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/blog/2016-02-19-zap-newsletter-2016-february/images/Context-session-props.png](https://www.zaproxy.org/blog/2016-02-19-zap-newsletter-2016-february/images/Context-session-props.png)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 227`
-  
-  
-  
-  
 * URL: [https://www.zaproxy.org/docs/guides/zapping-the-top-10/](https://www.zaproxy.org/docs/guides/zapping-the-top-10/)
   
   
@@ -2013,17 +1958,6 @@ Instances: 3
   
   
   
-* URL: [https://www.zaproxy.org/faq/how-do-you-configure-zap-to-test-an-application-on-localhost/](https://www.zaproxy.org/faq/how-do-you-configure-zap-to-test-an-application-on-localhost/)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 0`
-  
-  
-  
-  
 * URL: [https://www.zaproxy.org/docs/desktop/addons/fuzzer/processors/](https://www.zaproxy.org/docs/desktop/addons/fuzzer/processors/)
   
   
@@ -2031,17 +1965,6 @@ Instances: 3
   
   
   * Evidence: `Age: 0`
-  
-  
-  
-  
-* URL: [https://www.zaproxy.org/blog/2015-12-15-zap-newsletter-2015-december/images/custom-http-breakpoint.png](https://www.zaproxy.org/blog/2015-12-15-zap-newsletter-2015-december/images/custom-http-breakpoint.png)
-  
-  
-  * Method: `GET`
-  
-  
-  * Evidence: `Age: 224`
   
   
   
@@ -2057,13 +1980,13 @@ Instances: 3
   
   
   
-* URL: [https://www.zaproxy.org/getting-started/images/browser-network-proxy.png](https://www.zaproxy.org/getting-started/images/browser-network-proxy.png)
+* URL: [https://www.zaproxy.org/main.7d9e3.css](https://www.zaproxy.org/main.7d9e3.css)
   
   
   * Method: `GET`
   
   
-  * Evidence: `Age: 228`
+  * Evidence: `Age: 262`
   
   
   
@@ -2079,7 +2002,84 @@ Instances: 3
   
   
   
-Instances: 613
+* URL: [https://www.zaproxy.org/docs/desktop/releases/2.1.0/](https://www.zaproxy.org/docs/desktop/releases/2.1.0/)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 0`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/docs/desktop/addons/websockets/api/](https://www.zaproxy.org/docs/desktop/addons/websockets/api/)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 0`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/docs/desktop/ui/tabs/httpsessions/](https://www.zaproxy.org/docs/desktop/ui/tabs/httpsessions/)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 0`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/docs/desktop/releases/1.0.0/](https://www.zaproxy.org/docs/desktop/releases/1.0.0/)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 0`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/docs/desktop/ui/dialogs/index.xml](https://www.zaproxy.org/docs/desktop/ui/dialogs/index.xml)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 0`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/docs/desktop/start/checks/](https://www.zaproxy.org/docs/desktop/start/checks/)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 0`
+  
+  
+  
+  
+* URL: [https://www.zaproxy.org/docs/desktop/start/features/stats/](https://www.zaproxy.org/docs/desktop/start/features/stats/)
+  
+  
+  * Method: `GET`
+  
+  
+  * Evidence: `Age: 0`
+  
+  
+  
+  
+Instances: 452
   
 ### Solution
 <p>Validate that the response does not contain sensitive, personal or user-specific information.  If it does, consider the use of the following HTTP response headers, to limit, or prevent the content being stored and retrieved from the cache by another user:</p><p>Cache-Control: no-cache, no-store, must-revalidate, private</p><p>Pragma: no-cache</p><p>Expires: 0</p><p>This configuration directs both HTTP 1.0 and HTTP 1.1 compliant caching servers to not store the response, and to not retrieve the response (without validation) from the cache, in response to a similar request.</p>
@@ -2426,7 +2426,7 @@ Instances: 4
   
   
   
-* URL: [https://www.zaproxy.org/](https://www.zaproxy.org/)
+* URL: [https://www.zaproxy.org/robots.txt](https://www.zaproxy.org/robots.txt)
   
   
   * Method: `GET`
@@ -2434,7 +2434,7 @@ Instances: 4
   
   
   
-* URL: [https://www.zaproxy.org/robots.txt](https://www.zaproxy.org/robots.txt)
+* URL: [https://www.zaproxy.org/](https://www.zaproxy.org/)
   
   
   * Method: `GET`
@@ -2456,7 +2456,7 @@ Instances: 3
 <p>Always scope cookies to a FQDN (Fully Qualified Domain Name).</p>
   
 ### Other information
-<p>The origin domain used for comparison was: </p><p>www.zaproxy.org</p><p>__cfduid=de36ec86bec31fa655a79485465e162901583928109</p><p></p>
+<p>The origin domain used for comparison was: </p><p>www.zaproxy.org</p><p>__cfduid=d5fa53cabaae70d25ce65757a664dff9b1583928721</p><p></p>
   
 ### Reference
 * https://tools.ietf.org/html/rfc6265#section-4.1
