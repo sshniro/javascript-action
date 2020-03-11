@@ -6,7 +6,7 @@ on:
 jobs:
   hello_world_job:
     runs-on: ubuntu-latest
-    name: A job to say hello
+    name: Scan the webapplication
     steps:
       - name: Checkout
         uses: actions/checkout@v2
