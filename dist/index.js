@@ -193,7 +193,7 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
         create_new_issue = true;
     }
 
-    let mdLink = `https://github.com/${repoName}/blob/${branch}/${zapWorkDir}/${zapYAMLFileName}`;
+    let mdLink = `https://github.com/${repoName}/blob/${branch}/${zapWorkDir}/${mdReportName}`;
 
     if (create_new_issue) {
 
