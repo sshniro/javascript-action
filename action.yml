@@ -26,6 +26,10 @@ inputs:
     description: 'The YAML file to be generated to maintain history of scan'
     required: true
     default: 'zap.yaml'
+  zap_conf_file_name:
+    description: 'The YAML file to be generated to maintain history of scan'
+    required: true
+    default: 'zap.yaml'
 outputs:
   time: # output will be available to future steps
     description: 'The message to output'
