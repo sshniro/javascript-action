@@ -21,15 +21,11 @@ jobs:
           report_name: 'report_md.md'
           zap_conf_file_name: 'zap.yaml'
           docker_name: 'owasp/zap2docker-stable'
-          target: 'https://www.zaproxy.org/'
+          target: 'https://www.example.com'
           rules_file_name: 'rules.tsv'
           github_run_id: ${{ github.run_id }}
           github_run_number: ${{ github.run_number }}
       - uses: actions/upload-artifact@v1
         with:
-          name: report_md.md
-          path: ${{ github.workspace }}
-      - uses: actions/upload-artifact@v1
-        with:
-          name: zap.yaml
-          path: ${{ github.workspace }}
+          name: zap_scan
+          path: ${{ github.workspace }}/.zap/
