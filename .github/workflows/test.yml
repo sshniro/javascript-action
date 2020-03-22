@@ -22,6 +22,8 @@ jobs:
           zap_conf_file_name: 'zap.yaml'
           docker_name: 'owasp/zap2docker-stable'
           target: 'https://www.zaproxy.org/'
+          github_run_id: ${{ GITHUB_RUN_ID }}
+          github_run_number: ${{ GITHUB_RUN_NUMBER }}
           rules_file_name: 'rules.tsv'
       - uses: actions/upload-artifact@v1
         with:
