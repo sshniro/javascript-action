@@ -74,8 +74,8 @@ async function run() {
         let docker_name = core.getInput('docker_name');
         let target = core.getInput('target');
         let rulesFileName = core.getInput('rules_file_name');
-        let githubRunID = core.getInput('GITHUB_RUN_ID');
-        let githubRunNumber = core.getInput('GITHUB_RUN_NUMBER');
+        let githubRunID = core.getInput('github_run_id');
+        let githubRunNumber = core.getInput('github_run_number');
 
         console.log('starting the program')
         console.log('github run id :' + githubRunID);
