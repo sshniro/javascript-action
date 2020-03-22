@@ -5,6 +5,7 @@ const yaml = require('js-yaml')
 const github = require('@actions/github');
 const _ = require('lodash');
 const request = require('request');
+var AdmZip = require('adm-zip');
 // var unzip = require('unzip');
 
 // require('./dev-helper').fillEnvironmentVariables();
