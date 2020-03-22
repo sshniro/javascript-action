@@ -4,7 +4,7 @@ on:
       - '.zap/**'
 
 jobs:
-  hello_world_job:
+  zap_scan:
     runs-on: ubuntu-latest
     name: Scan the webapplication
     steps:
@@ -23,3 +23,7 @@ jobs:
           docker_name: 'owasp/zap2docker-stable'
           target: 'https://www.zaproxy.org/'
           rules_file_name: 'rules.tsv'
+      - uses: actions/upload-artifact@v1
+        with:
+          name: report
+          path: ${{ github.workspace }}/index.js
