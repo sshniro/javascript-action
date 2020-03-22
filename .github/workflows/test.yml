@@ -27,9 +27,9 @@ jobs:
           github_run_number: ${{ github.run_number }}
       - uses: actions/upload-artifact@v1
         with:
-          name: report_md
-          path: ${{ github.workspace }}/report_md.md
+          name: report_md.md
+          path: ${{ github.workspace }}
       - uses: actions/upload-artifact@v1
           with:
-            name: report_yaml
-            path: ${{ github.workspace }}/zap.yaml
+            name: zap.yaml
+            path: ${{ github.workspace }}
