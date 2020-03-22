@@ -4,6 +4,8 @@ const fs = require('fs');
 const yaml = require('js-yaml')
 const github = require('@actions/github');
 const _ = require('lodash');
+const request = require('request');
+var unzip = require('unzip');
 
 // require('./dev-helper').fillEnvironmentVariables();
 const actionHelper = require('./action-helper');
@@ -29,7 +31,10 @@ async function run() {
 
         console.log('starting the program')
         console.log('github run id :' + githubRunID);
-        console.log('github run number :' + githubRunNumber);
+
+        if (!fs.existsSync(zapWorkDir)){
+            fs.mkdirSync(`${workspace}/${zapWorkDir}`);
+        }
 
         let jsonReportName = 'report_json.json';
 
@@ -48,11 +53,11 @@ async function run() {
         }
 
         try {
-            // let result = await exec.exec(command);
+            let result = await exec.exec(command);
         } catch (err) {
             console.log('The ZAP Baseline scan has failed, starting to analyze the alerts. err: ' + err.toString());
         }
-        let res = await processReport(token, repoName, workspace, zapYAMLFileName, branch, jsonReportName, zapWorkDir, plugins, mdReportName);
+        let res = await processReport(token, repoName, workspace, zapYAMLFileName, branch, jsonReportName, zapWorkDir, plugins, mdReportName, githubRunID);
     } catch (error) {
         core.setFailed(error.message);
     }
@@ -61,10 +66,10 @@ async function run() {
 run();
 
 
-async function processReport(token, repoName, workSpace, zapYAMLFileName, branch, jsonReportName, zapWorkDir, plugins, mdReportName) {
+async function processReport(token, repoName, workSpace, zapYAMLFileName, branch, jsonReportName, zapWorkDir, plugins, mdReportName, runnerID) {
 
     let jsonReport;
-    let configReport;
+    let configReport = {};
     let originalReport;
     let create_new_issue = false;
     let issue = null;
@@ -72,6 +77,25 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
     let tmp = repoName.split('/');
     let owner = tmp[0];
     let repo = tmp[1];
+
+    let issueTitle = 'ZAP Scan Baseline Report';
+
+    let issues = await octokit.search.issuesAndPullRequests({
+        q: `is:issue+:is:open+repo:${repoName}+ZAP+Scan+Baseline+Report`,
+        // q: `is:issue+:is:open+repo:${repoName}+test`,
+        sort: 'updated'
+    });
+
+    // If there is no existing open issue then create a new issue
+    if (issues.data.items.length === 0) {
+        create_new_issue = true;
+    }else {
+        issue = issues.data.items[0];
+
+        // TODO: Read the last comment and get the runner ID
+
+        // TODO: Download the last report yaml file
+    }
 
     try {
         let jReportFile = fs.readFileSync(workSpace + "/" + jsonReportName);
@@ -81,50 +105,40 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
         return
     }
 
-    try {
-        let yamlFile = fs.readFileSync(`${workSpace}/${zapWorkDir}/${zapYAMLFileName}`);
-        configReport = yaml.safeLoad(yamlFile);
+    // The following section loads the previous report yaml file
+    if(!create_new_issue){
+        try {
+            let yamlFile = fs.readFileSync(`${workSpace}/${zapWorkDir}/${zapYAMLFileName}`);
+            configReport = yaml.safeLoad(yamlFile);
 
-        if (configReport === undefined) {
-            create_new_issue = true;
-        }
-
-        if (configReport.hasOwnProperty("issue")){
-            try{
-                issue = await octokit.issues.get({
-                    owner: owner,
-                    repo: repo,
-                    issue_number: configReport.issue,
-                });
-                if (issue.data.state === 'closed') {
-                    create_new_issue = true;
-                }
-            }catch (issueError) {
-                console.log(issueError.toString());
+            // If the file is empty create a new issue
+            if (configReport === undefined) {
+                create_new_issue = true;
             }
 
+        } catch (e) {
+            console.log('Previous ZAP results are not available in the dir, creating new Issue!');
+            create_new_issue = true;
         }
-    } catch (e) {
-        console.log('Previous ZAP results are not available in the dir, creating new Issue!');
-        create_new_issue = true;
     }
 
+    // Deep clone the report for further processing
     originalReport = JSON.parse(JSON.stringify(jsonReport));
     if (plugins.length !== 0) {
         console.log(`${plugins.length} plugins will be ignored according to the rules configuration`);
         jsonReport = await actionHelper.filterReport(jsonReport, plugins);
         configReport = await actionHelper.filterReport(configReport, plugins);
     }
-    let newAlertExits = actionHelper.checkIfAlertsExists(jsonReport);
-    let prevAlertExits = actionHelper.checkIfAlertsExists(configReport);
 
-    console.log(`New alerts exists: ${newAlertExits} , prevAlertsExits ${prevAlertExits}`);
+    let newAlertExits = actionHelper.checkIfAlertsExists(jsonReport);
+
+    console.log(`New alerts exists: ${newAlertExits}`);
 
     if (!newAlertExits) {
         // If no new alerts have been found close the issue
         console.log('No new alerts have been identified by the ZAP Scan');
         if (issue != null && issue.data.state === 'open') {
-            // close the issue with comment
+            // close the issue with a comment
             try{
                 await octokit.issues.createComment({
                     owner: owner,
@@ -148,41 +162,18 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
         return;
     }
 
-    // New alerts have been identified but all previous alerts were ignored by the rules file
-    if (!prevAlertExits) {
-        create_new_issue = true;
-    }
-
-    let mdLink = `https://github.com/${repoName}/blob/${branch}/${zapWorkDir}/${mdReportName}`;
+    let runnerInfo = `RunnerID:${runnerID}`;
 
     if (create_new_issue) {
-
-        let msg = actionHelper.createMessage(jsonReport['site'], mdLink);
-
-        const newIssue = await octokit.issues.create({
-            owner: owner,
-            repo: repo,
-            title: 'ZAP Scan Baseline Report',
-            body: msg
-        });
-        console.log(`Created a new issue #${newIssue.data.number} for the ZAP Scan.`);
-
-        jsonReport.issue = newIssue.data.number;
-
-        let yamlString = Buffer.from(yaml.safeDump(jsonReport)).toString("base64");
-        let reportString = await actionHelper.readMDFile(`${workSpace}/${mdReportName}`);
-
-        let upsertResponse = await createOrUpdateReportAndConfig(yamlString, reportString, zapYAMLFileName, mdReportName, zapWorkDir, repo, owner);
-        if (upsertResponse.reportUpsertResult != null && upsertResponse.zapYAMLUpsertResult != null) {
-            console.log(`Process completed successfully, and the new alerts have been reported in the issue ${newIssue.data.number}!`);
-        }
+        let res = await createNewIssue(owner, repo, workSpace, zapYAMLFileName, jsonReport, runnerInfo)
+        console.log(res);
     } else {
         let siteClone = actionHelper.generateDifference(jsonReport, configReport);
 
         if (jsonReport.updated) {
 
             try{
-                let msg = actionHelper.createMessage(siteClone, mdLink);
+                let msg = actionHelper.createMessage(siteClone, runnerInfo);
                 await octokit.issues.createComment({
                     owner: owner,
                     repo: repo,
@@ -191,15 +182,10 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
                 });
                 console.log(`The issue #${issue.data.number} has been updated with the latest ZAP Scan!`);
 
-                originalReport.issue = issue.data.number;
-
                 let yamlString = Buffer.from(yaml.safeDump(originalReport)).toString("base64");
-                let reportString = await actionHelper.readMDFile(`${workSpace}/${mdReportName}`);
+                fs.writeFileSync(`${workSpace}/${zapWorkDir}/${zapYAMLFileName}`, yamlString);
 
-                let upsertResponse = await createOrUpdateReportAndConfig(yamlString, reportString, zapYAMLFileName, mdReportName, zapWorkDir, repo, owner);
-                if (upsertResponse.reportUpsertResult != null && upsertResponse.zapYAMLUpsertResult != null) {
-                    console.log('ZAP Scan process completed successfully!');
-                }
+                console.log('ZAP Scan process completed successfully!');
             }catch (err) {
                 console.log(`Error occurred while updating the repository with the latest ZAP Scan: ${err}`)
             }
@@ -211,70 +197,18 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
 }
 
 
-async function createOrUpdateReportAndConfig(yamlString, reportString, configFileName, reportName, zapPath, repo, owner) {
-    let zapFolderContents = [];
-    try {
-        zapFolderContents = await octokit.repos.getContents({
-            owner: owner,
-            repo: repo,
-            path: zapPath
-        });
-    } catch (e) {
-        console.log('The directory contents are empty! Creating new files for zap and report.')
-    }
+async function createNewIssue(owner, repo, workSpace, zapYAMLFileName, jsonReport, runnerInfo) {
+    let msg = actionHelper.createMessage(jsonReport['site'], runnerInfo);
 
-    // Find if the files already exists in the repository
-    let zapFile = _.find(zapFolderContents.data, {name: configFileName});
-    let reportFile = _.find(zapFolderContents.data, {name: reportName});
+    const newIssue = await octokit.issues.create({
+        owner: owner,
+        repo: repo,
+        title: 'ZAP Scan Baseline Report',
+        body: msg
+    });
 
-    let zapYAMLUpsertResult = null;
-    if (zapFile) {
-        zapYAMLUpsertResult = await updateFile(owner, repo, `${zapPath}/${configFileName}`, 'updating new zap config', yamlString, zapFile.sha);
+    console.log(`Created a new issue #${newIssue.data.number} for the ZAP Scan.`);
 
-    } else {
-        zapYAMLUpsertResult = await createFile(owner, repo, `${zapPath}/${configFileName}`, 'adding new zap config', yamlString);
-
-    }
-    let reportUpsertResult = null;
-    if (reportFile) {
-        reportUpsertResult = await updateFile(owner, repo, `${zapPath}/${reportName}`, 'updating the report', reportString, reportFile.sha);
-    } else {
-        reportUpsertResult = await createFile(owner, repo, `${zapPath}/${reportName}`, 'adding the new report', reportString);
-    }
-
-    return {reportUpsertResult: reportUpsertResult, zapYAMLUpsertResult: zapYAMLUpsertResult}
-}
-
-
-async function createFile(owner, repo, path, message, content) {
-    let res = null;
-    try {
-        res = await octokit.repos.createOrUpdateFile({
-            owner: owner,
-            repo: repo,
-            path: path,
-            message: message,
-            content: content
-        });
-    } catch (err) {
-        console.log(`Error Occurred while creating the file: ${path} `, err);
-    }
-    return res;
-}
-
-async function updateFile(owner, repo, path, message, content, sha) {
-    let res = null;
-    try {
-        res = await octokit.repos.createOrUpdateFile({
-            owner: owner,
-            repo: repo,
-            path: path,
-            message: message,
-            content: content,
-            sha: sha
-        });
-    } catch (err) {
-        console.log(`Error Occurred while updating the file: ${path} `, err);
-    }
-    return res;
+    fs.writeFileSync(`${workSpace}/${zapYAMLFileName}`, yaml.safeDump(jsonReport));
+    console.log(`Process completed successfully, and the new alerts have been reported in the issue ${newIssue.data.number}!`);
 }

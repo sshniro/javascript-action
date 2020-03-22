@@ -37,7 +37,7 @@ let actionHelper = {
         return plugins;
     }),
 
-    createMessage: ((sites, mdLink) => {
+    createMessage: ((sites, runnerID) => {
         const NXT_LINE = '\n';
         const TAB = "\t";
         const BULLET = "-";
@@ -66,7 +66,8 @@ let actionHelper = {
             msg = msg + NXT_LINE
         }));
         if (msg.trim() !== '') {
-            msg = msg + NXT_LINE + `View the following [report](${mdLink}) for further analysis.`;
+            msg = msg + NXT_LINE + `The report is attached as an artifact inside the workflow.`;
+            msg = msg + NXT_LINE + runnerID;
         }
         return msg
     }),
