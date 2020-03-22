@@ -74,6 +74,12 @@ async function run() {
         let docker_name = core.getInput('docker_name');
         let target = core.getInput('target');
         let rulesFileName = core.getInput('rules_file_name');
+        let githubRunID = core.getInput('GITHUB_RUN_ID');
+        let githubRunNumber = core.getInput('GITHUB_RUN_NUMBER');
+
+        console.log('starting the program')
+        console.log('github run id :' + githubRunID);
+        console.log('github run number :' + githubRunNumber);
 
         let jsonReportName = 'report_json.json';
 
@@ -92,7 +98,7 @@ async function run() {
         }
 
         try {
-            let result = await exec.exec(command);
+            // let result = await exec.exec(command);
         } catch (err) {
             console.log('The ZAP Baseline scan has failed, starting to analyze the alerts. err: ' + err.toString());
         }
@@ -160,7 +166,7 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
         configReport = await actionHelper.filterReport(configReport, plugins);
     }
     let newAlertExits = actionHelper.checkIfAlertsExists(jsonReport);
-    let prevAlertExits = actionHelper.checkIfAlertsExists(jsonReport);
+    let prevAlertExits = actionHelper.checkIfAlertsExists(configReport);
 
     console.log(`New alerts exists: ${newAlertExits} , prevAlertsExits ${prevAlertExits}`);
 
