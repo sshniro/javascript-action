@@ -27,6 +27,7 @@ async function run() {
         let githubRunID = core.getInput('GITHUB_RUN_ID');
         let githubRunNumber = core.getInput('GITHUB_RUN_NUMBER');
 
+        console.log('starting the program')
         console.log('github run id :' + githubRunID);
         console.log('github run number :' + githubRunNumber);
 
