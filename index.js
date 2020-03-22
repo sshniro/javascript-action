@@ -24,6 +24,11 @@ async function run() {
         let docker_name = core.getInput('docker_name');
         let target = core.getInput('target');
         let rulesFileName = core.getInput('rules_file_name');
+        let githubRunID = core.getInput('GITHUB_RUN_ID');
+        let githubRunNumber = core.getInput('GITHUB_RUN_NUMBER');
+
+        console.log('github run id :' + githubRunID);
+        console.log('github run number :' + githubRunNumber);
 
         let jsonReportName = 'report_json.json';
 
