@@ -6,7 +6,7 @@ const github = require('@actions/github');
 const _ = require('lodash');
 const request = require('request');
 var AdmZip = require('adm-zip');
-// var unzip = require('unzip');
+var unzip = require('unzip');
 
 // require('./dev-helper').fillEnvironmentVariables();
 const actionHelper = require('./action-helper');
