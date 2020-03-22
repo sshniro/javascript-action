@@ -30,6 +30,6 @@ jobs:
           name: report_md.md
           path: ${{ github.workspace }}
       - uses: actions/upload-artifact@v1
-          with:
-            name: zap.yaml
-            path: ${{ github.workspace }}
+        with:
+          name: zap.yaml
+          path: ${{ github.workspace }}
