@@ -1,7 +1,4 @@
-on:
-  push:
-    paths-ignore:
-      - '.zap/**'
+on: [push]
 
 jobs:
   zap_scan:
