@@ -56,13 +56,14 @@ let actionHelper = {
         let msg = '';
 
         sites.forEach((site => {
-            msg = msg + `${BULLET} Site[${site["@name"]}] ${NXT_LINE}`
+            msg = msg + `${BULLET} Site[${site["@name"]}] ${NXT_LINE}`;
             if (site.hasOwnProperty('alerts')) {
                 if (site.alerts.length !== 0) {
                     msg = `${msg} ${TAB} **New Alerts** ${NXT_LINE}`;
                     site.alerts.forEach((alert) => {
                         msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
                     });
+                    msg = msg + NXT_LINE
                 }
             }
 
@@ -72,6 +73,7 @@ let actionHelper = {
                     site.removedAlerts.forEach((alert) => {
                         msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
                     });
+                    msg = msg + NXT_LINE
                 }
             }
 
@@ -81,6 +83,7 @@ let actionHelper = {
                     site.ignoredAlerts.forEach((alert) => {
                         msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
                     });
+                    msg = msg + NXT_LINE
                 }
             }
 
@@ -118,6 +121,8 @@ let actionHelper = {
                 }else if(newReportSite.hasOwnProperty('ignoredAlerts')){
                     ignoredAlerts = newReportSite['ignoredAlerts']
                 }
+
+                removedAlerts = _.differenceBy(removedAlerts, ignoredAlerts, 'pluginid');
 
                 newSite.alerts = newAlerts;
                 newSite.removedAlerts = removedAlerts;

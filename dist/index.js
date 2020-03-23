@@ -3381,11 +3381,7 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
         // Update the newly filtered report
         fs.unlinkSync(`${workSpace}/${zapWorkDir}/${jsonReportName}`);
         fs.writeFileSync(`${workSpace}/${zapWorkDir}/${jsonReportName}`, JSON.stringify(currentReport));
-        console.log('the file has been created')
-        // if (previousReport !== undefined) {
-        //     console.log(`starting alert filtering for the previous report!`);
-        //     previousReport = await actionHelper.filterReport(previousReport, plugins);
-        // }
+        console.log('The filtered reported has been persisted!')
     }
 
     let newAlertExits = actionHelper.checkIfAlertsExists(currentReport);
@@ -47700,13 +47696,14 @@ let actionHelper = {
         let msg = '';
 
         sites.forEach((site => {
-            msg = msg + `${BULLET} Site[${site["@name"]}] ${NXT_LINE}`
+            msg = msg + `${BULLET} Site[${site["@name"]}] ${NXT_LINE}`;
             if (site.hasOwnProperty('alerts')) {
                 if (site.alerts.length !== 0) {
                     msg = `${msg} ${TAB} **New Alerts** ${NXT_LINE}`;
                     site.alerts.forEach((alert) => {
                         msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
                     });
+                    msg = msg + NXT_LINE
                 }
             }
 
@@ -47716,6 +47713,7 @@ let actionHelper = {
                     site.removedAlerts.forEach((alert) => {
                         msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
                     });
+                    msg = msg + NXT_LINE
                 }
             }
 
@@ -47725,6 +47723,7 @@ let actionHelper = {
                     site.ignoredAlerts.forEach((alert) => {
                         msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
                     });
+                    msg = msg + NXT_LINE
                 }
             }
 
@@ -47762,6 +47761,8 @@ let actionHelper = {
                 }else if(newReportSite.hasOwnProperty('ignoredAlerts')){
                     ignoredAlerts = newReportSite['ignoredAlerts']
                 }
+
+                removedAlerts = _.differenceBy(removedAlerts, ignoredAlerts, 'pluginid');
 
                 newSite.alerts = newAlerts;
                 newSite.removedAlerts = removedAlerts;
