@@ -17,7 +17,7 @@ jobs:
         uses: ./
         with:
           workspace: ${{ github.workspace }}
-          token: ${{ secrets.GIT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           repo_name: ${{github.repository}}
           zap_work_dir: '.zap'
           branch: 'master'
