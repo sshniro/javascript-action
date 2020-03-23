@@ -3381,9 +3381,9 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
         console.log(`${plugins.length} plugins will be ignored according to the rules configuration`);
         currentReport = await actionHelper.filterReport(currentReport, plugins);
 
-        if (previousReport !== undefined) {
-            previousReport = await actionHelper.filterReport(previousReport, plugins);
-        }
+        // if (previousReport !== undefined) {
+        //     previousReport = await actionHelper.filterReport(previousReport, plugins);
+        // }
     }
 
     let newAlertExits = actionHelper.checkIfAlertsExists(currentReport);
