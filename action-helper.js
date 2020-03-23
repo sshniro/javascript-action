@@ -75,6 +75,15 @@ let actionHelper = {
                 }
             }
 
+            if (site.hasOwnProperty('ignoredAlerts')) {
+                if (site.ignoredAlerts.length !== 0) {
+                    msg = `${msg} ${TAB} **Ignored Alerts** ${NXT_LINE}`;
+                    site.ignoredAlerts.forEach((alert) => {
+                        msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
+                    });
+                }
+            }
+
             msg = msg + NXT_LINE
         }));
         if (msg.trim() !== '') {

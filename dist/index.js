@@ -3379,7 +3379,9 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
         currentReport = await actionHelper.filterReport(currentReport, plugins);
 
         // Update the newly filtered report
-        fs.writeFileSync(`${workSpace}/${zapWorkDir}/${jsonReportName}`, currentReport);
+        fs.unlinkSync(`${workSpace}/${zapWorkDir}/${jsonReportName}`);
+        fs.writeFileSync(`${workSpace}/${zapWorkDir}/${jsonReportName}`, JSON.stringify(currentReport));
+        console.log('the file has been created')
         // if (previousReport !== undefined) {
         //     console.log(`starting alert filtering for the previous report!`);
         //     previousReport = await actionHelper.filterReport(previousReport, plugins);
@@ -47712,6 +47714,15 @@ let actionHelper = {
                 if (site.removedAlerts.length !== 0) {
                     msg = `${msg} ${TAB} **Resolved Alerts** ${NXT_LINE}`;
                     site.removedAlerts.forEach((alert) => {
+                        msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
+                    });
+                }
+            }
+
+            if (site.hasOwnProperty('ignoredAlerts')) {
+                if (site.ignoredAlerts.length !== 0) {
+                    msg = `${msg} ${TAB} **Ignored Alerts** ${NXT_LINE}`;
+                    site.ignoredAlerts.forEach((alert) => {
                         msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
                     });
                 }

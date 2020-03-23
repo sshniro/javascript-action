@@ -125,7 +125,9 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
         currentReport = await actionHelper.filterReport(currentReport, plugins);
 
         // Update the newly filtered report
-        fs.writeFileSync(`${workSpace}/${zapWorkDir}/${jsonReportName}`, currentReport);
+        fs.unlinkSync(`${workSpace}/${zapWorkDir}/${jsonReportName}`);
+        fs.writeFileSync(`${workSpace}/${zapWorkDir}/${jsonReportName}`, JSON.stringify(currentReport));
+        console.log('the file has been created')
         // if (previousReport !== undefined) {
         //     console.log(`starting alert filtering for the previous report!`);
         //     previousReport = await actionHelper.filterReport(previousReport, plugins);
