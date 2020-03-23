@@ -49,7 +49,7 @@ let actionHelper = {
         return plugins;
     }),
 
-    createMessage: ((sites, runnerID) => {
+    createMessage: ((sites, runnerID, runnerLink) => {
         const NXT_LINE = '\n';
         const TAB = "\t";
         const BULLET = "-";
@@ -90,7 +90,7 @@ let actionHelper = {
             msg = msg + NXT_LINE
         }));
         if (msg.trim() !== '') {
-            msg = msg + NXT_LINE + `The report is attached as an artifact inside the workflow.`;
+            msg = msg + NXT_LINE + runnerLink;
             msg = msg + NXT_LINE + runnerID;
         }
         return msg

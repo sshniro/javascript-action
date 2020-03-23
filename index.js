@@ -168,10 +168,11 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
     }
 
     let runnerInfo = `RunnerID:${currentRunnerID}`;
-
+    let runnerLink = `View the [following link](https://github.com/${owner}/${repo})/actions/runs/${currentRunnerID}` +
+        ` to download the report.`;
     if (create_new_issue) {
 
-        let msg = actionHelper.createMessage(currentReport['site'], runnerInfo);
+        let msg = actionHelper.createMessage(currentReport['site'], runnerInfo, runnerLink);
         const newIssue = await octokit.issues.create({
             owner: owner,
             repo: repo,
@@ -186,7 +187,7 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
         if (currentReport.updated) {
             console.log('The current report has changes compared to the previous report');
             try{
-                let msg = actionHelper.createMessage(siteClone, runnerInfo);
+                let msg = actionHelper.createMessage(siteClone, runnerInfo, runnerLink);
                 await octokit.issues.createComment({
                     owner: owner,
                     repo: repo,

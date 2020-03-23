@@ -3422,10 +3422,11 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
     }
 
     let runnerInfo = `RunnerID:${currentRunnerID}`;
-
+    let runnerLink = `View the [following link](https://github.com/${owner}/${repo})/actions/runs/${currentRunnerID}` +
+        ` to download the report.`;
     if (create_new_issue) {
 
-        let msg = actionHelper.createMessage(currentReport['site'], runnerInfo);
+        let msg = actionHelper.createMessage(currentReport['site'], runnerInfo, runnerLink);
         const newIssue = await octokit.issues.create({
             owner: owner,
             repo: repo,
@@ -3440,7 +3441,7 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
         if (currentReport.updated) {
             console.log('The current report has changes compared to the previous report');
             try{
-                let msg = actionHelper.createMessage(siteClone, runnerInfo);
+                let msg = actionHelper.createMessage(siteClone, runnerInfo, runnerLink);
                 await octokit.issues.createComment({
                     owner: owner,
                     repo: repo,
@@ -47694,7 +47695,7 @@ let actionHelper = {
         return plugins;
     }),
 
-    createMessage: ((sites, runnerID) => {
+    createMessage: ((sites, runnerID, runnerLink) => {
         const NXT_LINE = '\n';
         const TAB = "\t";
         const BULLET = "-";
@@ -47735,7 +47736,7 @@ let actionHelper = {
             msg = msg + NXT_LINE
         }));
         if (msg.trim() !== '') {
-            msg = msg + NXT_LINE + `The report is attached as an artifact inside the workflow.`;
+            msg = msg + NXT_LINE + runnerLink;
             msg = msg + NXT_LINE + runnerID;
         }
         return msg
