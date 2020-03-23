@@ -52,7 +52,7 @@ async function run() {
             plugins = await actionHelper.processLineByLine(`${workspace}/${zapWorkDir}/${rulesFileName}`);
         }
 
-        let command = (`docker run --user root -v ${workspace}/${zapWorkDir}:/zap/wrk/:rw --network="host"` +
+        let command = (`docker run --user root -v ${workspace}/${zapWorkDir}:/zap/wrk/:rw --network="host" ` +
             `-t ${docker_name} zap-baseline.py -t ${target} -g gen.conf -J ${jsonReportName} -w ${mdReportName}`);
 
         if (plugins.length !== 0) {
