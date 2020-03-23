@@ -30,10 +30,6 @@ async function run() {
         let rulesFileName = core.getInput('rules_file_name');
         let currentRunnerID = core.getInput('github_run_id');
 
-        // let zapWorkDir = core.getInput('zap_work_dir');
-        // let mdReportName = core.getInput('report_name');
-        // let zapYAMLFileName = core.getInput('zap_conf_file_name');
-
         console.log('starting the program');
         console.log('github run id :' + currentRunnerID);
 
@@ -61,7 +57,7 @@ async function run() {
         }
 
         try {
-            let result = await exec.exec(command);
+            // let result = await exec.exec(command);
         } catch (err) {
             console.log('The ZAP Baseline scan has failed, starting to analyze the alerts. err: ' + err.toString());
         }
@@ -139,26 +135,26 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
     if (!newAlertExits) {
         // If no new alerts have been found close the issue
         console.log('No new alerts have been identified by the ZAP Scan');
-        if (openIssue != null && openIssue.data.state === 'open') {
+        if (openIssue != null && openIssue.state === 'open') {
             // close the issue with a comment
             try{
                 await octokit.issues.createComment({
                     owner: owner,
                     repo: repo,
-                    issue_number: openIssue.data.number,
+                    issue_number: openIssue.number,
                     body: 'All the alerts have been resolved during the last ZAP Scan!'
                 });
                 await octokit.issues.update({
                     owner: owner,
                     repo: repo,
-                    issue_number: openIssue.data.number,
+                    issue_number: openIssue.number,
                     state: 'closed'
                 });
-                console.log(`No alerts have been found, closing the issue #${openIssue.data.number}`)
+                console.log(`No alerts have been found, closing the issue #${openIssue.number}`)
             }catch (err) {
                 console.log(`Error occurred while closing the issue with a comment! err: ${err}`)
             }
-        }else if (openIssue != null && openIssue.data.state === 'closed') {
+        }else if (openIssue != null && openIssue.state === 'closed') {
             console.log('No alerts found by ZAP Scan and no active issue is found in the repository, exiting the program!');
         }
         return;

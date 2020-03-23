@@ -136,6 +136,7 @@ let actionHelper = {
     filterReport: (async (jsonReport, plugins) => {
         jsonReport.site.forEach((s) => {
             if (s.hasOwnProperty('alerts') && s.alerts.length !== 0) {
+                console.log(`starting to filter the alerts for site: ${s['@name']}`);
                 let newAlerts = s.alerts.filter(function (e) {
                     return !plugins.includes(e.pluginid)
                 });
@@ -144,8 +145,9 @@ let actionHelper = {
                 });
                 s.alerts = newAlerts;
                 s.ignoredAlerts = removedAlerts;
-                console.log(`#${newAlerts.length} alerts have been identified for the site`);
-                console.log(`#${removedAlerts.length} have been ignored for the site`);
+
+                console.log(`#${newAlerts.length} alerts have been identified` +
+                    ` and #${removedAlerts.length} alerts have been ignored for the site.`);
             }
         });
         return jsonReport;
