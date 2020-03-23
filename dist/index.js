@@ -47790,7 +47790,8 @@ let actionHelper = {
                 });
                 s.alerts = newAlerts;
                 s.ignoredAlerts = removedAlerts;
-                console.log(`#${removedAlerts.length} have been ignored via the rules`);
+                console.log(`#${newAlerts.length} alerts have been identified for the site`);
+                console.log(`#${removedAlerts.length} have been ignored for the site`);
             }
         });
         return jsonReport;
