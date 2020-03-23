@@ -47769,7 +47769,7 @@ let actionHelper = {
                 newSite.ignoredAlerts = ignoredAlerts;
                 siteClone.push(newSite);
 
-                if (newAlerts.length !== 0 || removedAlerts.length !== 0) {
+                if (newAlerts.length !== 0 || removedAlerts.length !== 0 || ignoredAlerts.length !== 0) {
                     newReport.updated = true;
                 }
             }
