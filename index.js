@@ -130,7 +130,7 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
 
     let newAlertExits = actionHelper.checkIfAlertsExists(currentReport);
 
-    console.log(`New alerts exists: ${newAlertExits}`);
+    console.log(`Alerts present in the current report: ${newAlertExits}`);
 
     if (!newAlertExits) {
         // If no new alerts have been found close the issue
@@ -167,7 +167,7 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
     } else {
         let siteClone = actionHelper.generateDifference(currentReport, previousReport);
         if (currentReport.updated) {
-
+            console.log('The current report has changes compared to the previous report');
             try{
                 let msg = actionHelper.createMessage(siteClone, runnerInfo);
                 await octokit.issues.createComment({
@@ -177,12 +177,11 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
                     body: msg
                 });
 
-                console.log(`The issue #${openIssue.number} has been updated with the latest ZAP Scan!`);
+                console.log(`The issue #${openIssue.number} has been updated with the latest ZAP scan results!`);
                 console.log('ZAP Scan process completed successfully!');
             }catch (err) {
-                console.log(`Error occurred while updating the repository with the latest ZAP Scan: ${err}`)
+                console.log(`Error occurred while updating the issue #${openIssue.number} with the latest ZAP scan: ${err}`)
             }
-
         } else {
             console.log('No changes have been observed from the previous scan and current scan!, exiting the program!')
         }
