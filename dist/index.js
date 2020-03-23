@@ -3311,7 +3311,7 @@ async function run() {
             `-t ${docker_name} zap-baseline.py -t ${target} -g gen.conf -J ${jsonReportName} -w ${mdReportName}`);
 
         if (plugins.length !== 0) {
-            command = command + ` -c ${zapWorkDir}/${rulesFileName}`
+            command = command + ` -c ${rulesFileName}`
         }
 
         try {
