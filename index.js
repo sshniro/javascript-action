@@ -4,7 +4,6 @@ const fs = require('fs');
 const github = require('@actions/github');
 const _ = require('lodash');
 
-// require('./dev-helper').fillEnvironmentVariables();
 const actionHelper = require('./action-helper');
 
 // Forward variable declarations
@@ -57,7 +56,7 @@ async function run() {
         }
 
         try {
-            let result = await exec.exec(command);
+            await exec.exec(command);
         } catch (err) {
             console.log('The ZAP Baseline scan has failed, starting to analyze the alerts. err: ' + err.toString());
         }
@@ -67,6 +66,7 @@ async function run() {
     }
 }
 
+// require('./dev-helper').fillEnvironmentVariables();
 run();
 
 async function processReport(token, workSpace, branch, plugins, currentRunnerID) {
@@ -74,7 +74,7 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
     let currentReport;
     let previousReport = {};
     let create_new_issue = false;
-    let openIssue = null;
+    let openIssue;
     let previousRunnerID;
 
     let issues = await octokit.search.issuesAndPullRequests({
@@ -86,10 +86,17 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
     if (issues.data.items.length === 0) {
         create_new_issue = true;
     }else {
-        // Sometimes search API returns recently closed issue as open issue
-        if (issues.data.items[0]['state'] === 'open') {
-            openIssue = issues.data.items[0];
+        // Sometimes search API returns recently closed issue as an open issue
+        for (let i = 0; i < issues.data.items.length; i++) {
+            let issue = issues.data.items[i];
+            if(issue['state'] === 'open' && issue['user']['login'] === 'github-actions[bot]'){
+                openIssue = issue;
+            }
+        }
 
+        if (openIssue === undefined) {
+            create_new_issue = true;
+        }else {
             // If there is no comments then read the body
             if (openIssue['comments'] === 0) {
                 previousRunnerID = actionHelper.getRunnerID(openIssue['body']);
@@ -100,9 +107,20 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
                     issue_number: openIssue['number']
                 });
 
-                // TODO get the latest comment by user:github_actions
+                let lastBotComment;
                 let lastCommentIndex = comments['data'].length - 1;
-                previousRunnerID = actionHelper.getRunnerID(comments['data'][lastCommentIndex]['body'])
+                for (let i = lastCommentIndex; i >= 0; i--) {
+                    if (comments['data'][i]['user']['login'] === 'github-actions[bot]') {
+                        lastBotComment = comments['data'][i];
+                        break;
+                    }
+                }
+
+                if (lastBotComment === undefined) {
+                    previousRunnerID = actionHelper.getRunnerID(openIssue['body']);
+                }else {
+                    previousRunnerID = actionHelper.getRunnerID(lastBotComment['body']);
+                }
             }
 
             if (previousRunnerID !== null) {
@@ -111,8 +129,6 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
                     create_new_issue = true;
                 }
             }
-        }else {
-            create_new_issue = true;
         }
     }
 
@@ -126,13 +142,12 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
 
     if (plugins.length !== 0) {
         console.log(`${plugins.length} plugins will be ignored according to the rules configuration`);
-        console.log(`starting alert filtering for the current report!`);
         currentReport = await actionHelper.filterReport(currentReport, plugins);
 
         // Update the newly filtered report
         fs.unlinkSync(`${workSpace}/${zapWorkDir}/${jsonReportName}`);
         fs.writeFileSync(`${workSpace}/${zapWorkDir}/${jsonReportName}`, JSON.stringify(currentReport));
-        console.log('The filtered reported has been persisted!')
+        console.log('The current report is updated with the ignored alerts!')
     }
 
     let newAlertExits = actionHelper.checkIfAlertsExists(currentReport);

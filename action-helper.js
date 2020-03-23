@@ -3,8 +3,6 @@ const _ = require('lodash');
 const readline = require('readline');
 const AdmZip = require('adm-zip');
 const request = require('request');
-const yaml = require('js-yaml')
-
 
 function createReadStreamSafe(filename, options) {
     return new Promise((resolve, reject) => {
@@ -14,7 +12,6 @@ function createReadStreamSafe(filename, options) {
         });
     });
 }
-
 
 let actionHelper = {
 
@@ -176,6 +173,7 @@ let actionHelper = {
 
 
     readPreviousReport: (async (octokit, owner, repo, workSpace, runnerID) => {
+        let previousReport;
         let artifactList = await octokit.actions.listWorkflowRunArtifacts({
             owner: owner,
             repo: repo,
@@ -189,36 +187,36 @@ let actionHelper = {
                 if (a['name'] === 'zap_scan') {
                     artifactID = a['id']
                 }
-            }))
+            }));
         }
 
-        let download = await octokit.actions.downloadArtifact({
-            owner: owner,
-            repo: repo,
-            artifact_id: artifactID,
-            archive_format: 'zip'
-        });
+        if (artifactID !== undefined) {
+            let download = await octokit.actions.downloadArtifact({
+                owner: owner,
+                repo: repo,
+                artifact_id: artifactID,
+                archive_format: 'zip'
+            });
 
-        await new Promise(resolve =>
-            request(download.url)
-                .pipe(fs.createWriteStream(`${workSpace}/zap_scan.zip`))
-                .on('finish', () => {
-                    resolve();
-                }));
+            await new Promise(resolve =>
+                request(download.url)
+                    .pipe(fs.createWriteStream(`${workSpace}/zap_scan.zip`))
+                    .on('finish', () => {
+                        resolve();
+                    }));
 
-        let zip = new AdmZip(`${workSpace}/zap_scan.zip`);
-        let zipEntries = zip.getEntries();
+            let zip = new AdmZip(`${workSpace}/zap_scan.zip`);
+            let zipEntries = zip.getEntries();
 
-        let previousReport;
-        await zipEntries.forEach(function (zipEntry) {
-            if (zipEntry.entryName === "report_json.json") {
-                previousReport = JSON.parse(zipEntry.getData().toString('utf8'));
-            }
-        });
+            await zipEntries.forEach(function (zipEntry) {
+                if (zipEntry.entryName === "report_json.json") {
+                    previousReport = JSON.parse(zipEntry.getData().toString('utf8'));
+                }
+            });
+        }
 
         return previousReport;
     })
 };
-
 
 module.exports = actionHelper;
