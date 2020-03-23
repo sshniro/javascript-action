@@ -78,7 +78,7 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
     let previousRunnerID;
 
     let issues = await octokit.search.issuesAndPullRequests({
-        q: `is:issue+:is:open+repo:${owner}/${repo}+ZAP+Scan+Baseline+Report`,
+        q: `is:issue+:is:open+:state:open+repo:${owner}/${repo}+ZAP+Scan+Baseline+Report`,
         sort: 'updated'
     });
 
@@ -86,28 +86,33 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
     if (issues.data.items.length === 0) {
         create_new_issue = true;
     }else {
-        openIssue = issues.data.items[0];
+        // Sometimes search API returns recently closed issue as open issue
+        if (issues.data.items[0]['state'] === 'open') {
+            openIssue = issues.data.items[0];
 
-        // If there is no comments then read the body
-        if (openIssue['comments'] === 0) {
-            previousRunnerID = actionHelper.getRunnerID(openIssue['body']);
-        }else {
-            let comments = await octokit.issues.listComments({
-                owner: owner,
-                repo: repo,
-                issue_number: openIssue['number']
-            });
+            // If there is no comments then read the body
+            if (openIssue['comments'] === 0) {
+                previousRunnerID = actionHelper.getRunnerID(openIssue['body']);
+            }else {
+                let comments = await octokit.issues.listComments({
+                    owner: owner,
+                    repo: repo,
+                    issue_number: openIssue['number']
+                });
 
-            // TODO get the latest comment by user:github_actions
-            let lastCommentIndex = comments['data'].length - 1;
-            previousRunnerID = actionHelper.getRunnerID(comments['data'][lastCommentIndex]['body'])
-        }
-
-        if (previousRunnerID !== null) {
-            previousReport = await actionHelper.readPreviousReport(octokit, owner, repo, workSpace, previousRunnerID);
-            if (previousReport === undefined) {
-                create_new_issue = true;
+                // TODO get the latest comment by user:github_actions
+                let lastCommentIndex = comments['data'].length - 1;
+                previousRunnerID = actionHelper.getRunnerID(comments['data'][lastCommentIndex]['body'])
             }
+
+            if (previousRunnerID !== null) {
+                previousReport = await actionHelper.readPreviousReport(octokit, owner, repo, workSpace, previousRunnerID);
+                if (previousReport === undefined) {
+                    create_new_issue = true;
+                }
+            }
+        }else {
+            create_new_issue = true;
         }
     }
 
