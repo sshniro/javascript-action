@@ -3270,7 +3270,8 @@ let repo;
 // Default file names
 let jsonReportName = 'report_json.json';
 let mdReportName = 'report_md.md';
-let zapWorkDir = '.zap'
+let zapWorkDir = '.zap';
+
 async function run() {
 
     try {
@@ -3379,7 +3380,10 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
     if (plugins.length !== 0) {
         console.log(`${plugins.length} plugins will be ignored according to the rules configuration`);
         currentReport = await actionHelper.filterReport(currentReport, plugins);
-        previousReport = await actionHelper.filterReport(previousReport, plugins);
+
+        if (previousReport !== undefined) {
+            previousReport = await actionHelper.filterReport(previousReport, plugins);
+        }
     }
 
     let newAlertExits = actionHelper.checkIfAlertsExists(currentReport);
@@ -47786,6 +47790,7 @@ let actionHelper = {
                 });
                 s.alerts = newAlerts;
                 s.ignoredAlerts = removedAlerts;
+                console.log(`#${removedAlerts.length} have been ignored via the rules`);
             }
         });
         return jsonReport;

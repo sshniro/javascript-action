@@ -144,6 +144,7 @@ let actionHelper = {
                 });
                 s.alerts = newAlerts;
                 s.ignoredAlerts = removedAlerts;
+                console.log(`#${removedAlerts.length} have been ignored via the rules`);
             }
         });
         return jsonReport;
