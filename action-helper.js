@@ -1,6 +1,9 @@
 const fs = require('fs');
 const _ = require('lodash');
 const readline = require('readline');
+const AdmZip = require('adm-zip');
+const request = require('request');
+const yaml = require('js-yaml')
 
 
 function createReadStreamSafe(filename, options) {
@@ -14,6 +17,15 @@ function createReadStreamSafe(filename, options) {
 
 
 let actionHelper = {
+
+    getRunnerID: ((body) => {
+        let results = body.match('RunnerID:\\d+');
+        if (results !== null && results.length !== 0) {
+            return results[0].split(':')[1];
+        }
+        return null;
+    }),
+
     processLineByLine: (async (tsvFile) => {
         let plugins = [];
         try {
@@ -104,7 +116,7 @@ let actionHelper = {
         return siteClone;
     }),
 
-    readMDFile: (async (reportName)=>{
+    readMDFile: (async (reportName) => {
         let res = '';
         try {
             res = fs.readFileSync(reportName, {encoding: 'base64'});
@@ -114,20 +126,20 @@ let actionHelper = {
         return res;
     }),
 
-    checkIfAlertsExists: ((jsonReport)=>{
+    checkIfAlertsExists: ((jsonReport) => {
         return jsonReport.site.some((s) => {
             return (s.hasOwnProperty('alerts') && s.alerts.length !== 0);
         });
     }),
 
 
-    filterReport: (async (jsonReport, plugins)=>{
+    filterReport: (async (jsonReport, plugins) => {
         jsonReport.site.forEach((s) => {
             if (s.hasOwnProperty('alerts') && s.alerts.length !== 0) {
-                let newAlerts = s.alerts.filter(function(e) {
+                let newAlerts = s.alerts.filter(function (e) {
                     return !plugins.includes(e.pluginid)
                 });
-                let removedAlerts = s.alerts.filter(function(e) {
+                let removedAlerts = s.alerts.filter(function (e) {
                     return plugins.includes(e.pluginid)
                 });
                 s.alerts = newAlerts;
@@ -135,7 +147,53 @@ let actionHelper = {
             }
         });
         return jsonReport;
+    }),
+
+
+    readPreviousReport: (async (octokit, owner, repo, workSpace,runnerID) => {
+        let artifactList  = await octokit.actions.listWorkflowRunArtifacts({
+            owner: owner,
+            repo: repo,
+            run_id: runnerID
+        });
+
+        let artifacts = artifactList.data.artifacts;
+        let artifactID;
+        if (artifacts.length !== 0) {
+            artifacts.forEach((a => {
+                if (a['name'] === 'zap_scan') {
+                    artifactID = a['id']
+                }
+            }))
+        }
+
+        let download = await octokit.actions.downloadArtifact({
+            owner: owner,
+            repo: repo,
+            artifact_id : artifactID,
+            archive_format: 'zip'
+        });
+
+        await new Promise(resolve =>
+            request(download.url)
+                .pipe(fs.createWriteStream(`${workSpace}/zap_scan.zip`))
+                .on('finish', () => {
+                    resolve();
+                }));
+
+        let zip = new AdmZip(`${workSpace}/zap_scan.zip`);
+        let zipEntries = zip.getEntries();
+
+        let previousReport;
+        await zipEntries.forEach(function(zipEntry) {
+            if (zipEntry.entryName === "report_json.json") {
+                previousReport = JSON.parse(zipEntry.getData().toString('utf8'));
+            }
+        });
+
+        return previousReport;
     })
 };
+
 
 module.exports = actionHelper;

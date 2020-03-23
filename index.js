@@ -1,42 +1,48 @@
 const core = require('@actions/core');
 const exec = require('@actions/exec');
 const fs = require('fs');
-const yaml = require('js-yaml')
 const github = require('@actions/github');
 const _ = require('lodash');
-const request = require('request');
-var AdmZip = require('adm-zip');
-var unzip = require('unzip');
 
 // require('./dev-helper').fillEnvironmentVariables();
 const actionHelper = require('./action-helper');
 
+// Forward variable declarations
 let octokit;
 let context;
+let owner;
+let repo;
 
+// Default file names
+let jsonReportName = 'report_json.json';
+let mdReportName = 'report_md.md';
+let zapWorkDir = '.zap'
 async function run() {
 
     try {
         let workspace = core.getInput('workspace');
         let token = core.getInput('token');
         let repoName = core.getInput('repo_name');
-        let zapWorkDir = core.getInput('zap_work_dir');
         let branch = core.getInput('branch');
-        let mdReportName = core.getInput('report_name');
-        let zapYAMLFileName = core.getInput('zap_conf_file_name');
         let docker_name = core.getInput('docker_name');
         let target = core.getInput('target');
         let rulesFileName = core.getInput('rules_file_name');
-        let githubRunID = core.getInput('github_run_id');
+        let currentRunnerID = core.getInput('github_run_id');
 
-        console.log('starting the program')
-        console.log('github run id :' + githubRunID);
+        // let zapWorkDir = core.getInput('zap_work_dir');
+        // let mdReportName = core.getInput('report_name');
+        // let zapYAMLFileName = core.getInput('zap_conf_file_name');
+
+        console.log('starting the program');
+        console.log('github run id :' + currentRunnerID);
 
         if (!fs.existsSync(zapWorkDir)){
             fs.mkdirSync(`${workspace}/${zapWorkDir}`);
         }
 
-        let jsonReportName = 'report_json.json';
+        let tmp = repoName.split('/');
+        owner = tmp[0];
+        repo = tmp[1];
 
         octokit = new github.GitHub(token);
         context = github.context;
@@ -46,7 +52,8 @@ async function run() {
             plugins = await actionHelper.processLineByLine(`${workspace}/${zapWorkDir}/${rulesFileName}`);
         }
 
-        let command = (`docker run --user root -v ${workspace}/${zapWorkDir}:/zap/wrk/:rw --network="host" -t ${docker_name} zap-baseline.py -t ${target} -g gen.conf -J ${jsonReportName} -w ${mdReportName}`);
+        let command = (`docker run --user root -v ${workspace}/${zapWorkDir}:/zap/wrk/:rw --network="host"` +
+            `-t ${docker_name} zap-baseline.py -t ${target} -g gen.conf -J ${jsonReportName} -w ${mdReportName}`);
 
         if (plugins.length !== 0) {
             command = command + ` -c ${zapWorkDir}/${rulesFileName}`
@@ -57,7 +64,7 @@ async function run() {
         } catch (err) {
             console.log('The ZAP Baseline scan has failed, starting to analyze the alerts. err: ' + err.toString());
         }
-        let res = await processReport(token, repoName, workspace, zapYAMLFileName, branch, jsonReportName, zapWorkDir, plugins, mdReportName, githubRunID);
+        let res = await processReport(token, workspace, branch, plugins, currentRunnerID);
     } catch (error) {
         core.setFailed(error.message);
     }
@@ -65,24 +72,16 @@ async function run() {
 
 run();
 
+async function processReport(token, workSpace, branch, plugins, currentRunnerID) {
 
-async function processReport(token, repoName, workSpace, zapYAMLFileName, branch, jsonReportName, zapWorkDir, plugins, mdReportName, runnerID) {
-
-    let jsonReport;
-    let configReport = {};
-    let originalReport;
+    let currentReport;
+    let previousReport = {};
     let create_new_issue = false;
-    let issue = null;
-
-    let tmp = repoName.split('/');
-    let owner = tmp[0];
-    let repo = tmp[1];
-
-    let issueTitle = 'ZAP Scan Baseline Report';
+    let openIssue = null;
+    let previousRunnerID;
 
     let issues = await octokit.search.issuesAndPullRequests({
-        q: `is:issue+:is:open+repo:${repoName}+ZAP+Scan+Baseline+Report`,
-        // q: `is:issue+:is:open+repo:${repoName}+test`,
+        q: `is:issue+:is:open+repo:${owner}/${repo}+ZAP+Scan+Baseline+Report`,
         sort: 'updated'
     });
 
@@ -90,101 +89,95 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
     if (issues.data.items.length === 0) {
         create_new_issue = true;
     }else {
-        issue = issues.data.items[0];
+        openIssue = issues.data.items[0];
 
-        // TODO: Read the last comment and get the runner ID
+        // If there is no comments then read the body
+        if (openIssue['comments'] === 0) {
+            previousRunnerID = actionHelper.getRunnerID(openIssue['body']);
+        }else {
+            let comments = await octokit.issues.listComments({
+                owner: owner,
+                repo: repo,
+                issue_number: openIssue['number']
+            });
 
-        // TODO: Download the last report yaml file
+            // TODO get the latest comment by user:github actions
+            let lastCommentIndex = comments['data'].length - 1;
+            previousRunnerID = actionHelper.getRunnerID(comments['data'][lastCommentIndex]['body'])
+        }
+
+        if (previousRunnerID !== null) {
+            previousReport = await actionHelper.readPreviousReport(octokit, owner, repo, workSpace, previousRunnerID);
+            if (previousReport === undefined) {
+                create_new_issue = true;
+            }
+        }
     }
 
     try {
         let jReportFile = fs.readFileSync(`${workSpace}/${zapWorkDir}/${jsonReportName}`);
-        jsonReport = JSON.parse(jReportFile);
+        currentReport = JSON.parse(jReportFile);
     } catch (e) {
         console.log('Failed to locate the json report generated by ZAP Scan!');
         return
     }
 
-    // The following section loads the previous report yaml file
-    if(!create_new_issue){
-        try {
-            let yamlFile = fs.readFileSync(`${workSpace}/${zapWorkDir}/${zapYAMLFileName}`);
-            configReport = yaml.safeLoad(yamlFile);
-
-            // If the file is empty create a new issue
-            if (configReport === undefined) {
-                create_new_issue = true;
-            }
-
-        } catch (e) {
-            console.log('Previous ZAP results are not available in the dir, creating new Issue!');
-            create_new_issue = true;
-        }
-    }
-
-    // Deep clone the report for further processing
-    originalReport = JSON.parse(JSON.stringify(jsonReport));
     if (plugins.length !== 0) {
         console.log(`${plugins.length} plugins will be ignored according to the rules configuration`);
-        jsonReport = await actionHelper.filterReport(jsonReport, plugins);
-        configReport = await actionHelper.filterReport(configReport, plugins);
+        currentReport = await actionHelper.filterReport(currentReport, plugins);
+        previousReport = await actionHelper.filterReport(previousReport, plugins);
     }
 
-    let newAlertExits = actionHelper.checkIfAlertsExists(jsonReport);
+    let newAlertExits = actionHelper.checkIfAlertsExists(currentReport);
 
     console.log(`New alerts exists: ${newAlertExits}`);
 
     if (!newAlertExits) {
         // If no new alerts have been found close the issue
         console.log('No new alerts have been identified by the ZAP Scan');
-        if (issue != null && issue.data.state === 'open') {
+        if (openIssue != null && openIssue.data.state === 'open') {
             // close the issue with a comment
             try{
                 await octokit.issues.createComment({
                     owner: owner,
                     repo: repo,
-                    issue_number: issue.data.number,
+                    issue_number: openIssue.data.number,
                     body: 'All the alerts have been resolved during the last ZAP Scan!'
                 });
                 await octokit.issues.update({
                     owner: owner,
                     repo: repo,
-                    issue_number: issue.data.number,
+                    issue_number: openIssue.data.number,
                     state: 'closed'
                 });
-                console.log(`No alerts have been found, closing the issue #${issue.data.number}`)
+                console.log(`No alerts have been found, closing the issue #${openIssue.data.number}`)
             }catch (err) {
                 console.log(`Error occurred while closing the issue with a comment! err: ${err}`)
             }
-        }else if (issue != null && issue.data.state === 'closed') {
+        }else if (openIssue != null && openIssue.data.state === 'closed') {
             console.log('No alerts found by ZAP Scan and no active issue is found in the repository, exiting the program!');
         }
         return;
     }
 
-    let runnerInfo = `RunnerID:${runnerID}`;
+    let runnerInfo = `RunnerID:${currentRunnerID}`;
 
     if (create_new_issue) {
-        let res = await createNewIssue(owner, repo, workSpace, zapYAMLFileName, jsonReport, runnerInfo, zapWorkDir);
-        console.log(res);
+        let res = await createNewIssue(workSpace, currentReport, runnerInfo);
     } else {
-        let siteClone = actionHelper.generateDifference(jsonReport, configReport);
-
-        if (jsonReport.updated) {
+        let siteClone = actionHelper.generateDifference(currentReport, previousReport);
+        if (currentReport.updated) {
 
             try{
                 let msg = actionHelper.createMessage(siteClone, runnerInfo);
                 await octokit.issues.createComment({
                     owner: owner,
                     repo: repo,
-                    issue_number: configReport.issue,
+                    issue_number: openIssue['number'],
                     body: msg
                 });
-                console.log(`The issue #${issue.data.number} has been updated with the latest ZAP Scan!`);
 
-                let yamlString = Buffer.from(yaml.safeDump(originalReport)).toString("base64");
-                fs.writeFileSync(`${workSpace}/${zapWorkDir}/${zapYAMLFileName}`, yamlString);
-
+                console.log(`The issue #${openIssue.number} has been updated with the latest ZAP Scan!`);
                 console.log('ZAP Scan process completed successfully!');
             }catch (err) {
                 console.log(`Error occurred while updating the repository with the latest ZAP Scan: ${err}`)
@@ -197,7 +190,7 @@ async function processReport(token, repoName, workSpace, zapYAMLFileName, branch
 }
 
 
-async function createNewIssue(owner, repo, workSpace, zapYAMLFileName, jsonReport, runnerInfo, zapWrkDir) {
+async function createNewIssue(workSpace, jsonReport, runnerInfo) {
     let msg = actionHelper.createMessage(jsonReport['site'], runnerInfo);
 
     const newIssue = await octokit.issues.create({
@@ -208,7 +201,5 @@ async function createNewIssue(owner, repo, workSpace, zapYAMLFileName, jsonRepor
     });
 
     console.log(`Created a new issue #${newIssue.data.number} for the ZAP Scan.`);
-
-    fs.writeFileSync(`${workSpace}/${zapWrkDir}/${zapYAMLFileName}`, yaml.safeDump(jsonReport));
     console.log(`Process completed successfully, and the new alerts have been reported in the issue ${newIssue.data.number}!`);
 }
