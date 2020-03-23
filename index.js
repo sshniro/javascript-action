@@ -91,6 +91,7 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
             let issue = issues.data.items[i];
             if(issue['state'] === 'open' && issue['user']['login'] === 'github-actions[bot]'){
                 openIssue = issue;
+                break
             }
         }
 
