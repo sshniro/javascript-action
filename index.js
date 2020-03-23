@@ -57,11 +57,11 @@ async function run() {
         }
 
         try {
-            // let result = await exec.exec(command);
+            let result = await exec.exec(command);
         } catch (err) {
             console.log('The ZAP Baseline scan has failed, starting to analyze the alerts. err: ' + err.toString());
         }
-        let res = await processReport(token, workspace, branch, plugins, currentRunnerID);
+        await processReport(token, workspace, branch, plugins, currentRunnerID);
     } catch (error) {
         core.setFailed(error.message);
     }
@@ -98,7 +98,7 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
                 issue_number: openIssue['number']
             });
 
-            // TODO get the latest comment by user:github actions
+            // TODO get the latest comment by user:github_actions
             let lastCommentIndex = comments['data'].length - 1;
             previousRunnerID = actionHelper.getRunnerID(comments['data'][lastCommentIndex]['body'])
         }
@@ -121,9 +121,13 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
 
     if (plugins.length !== 0) {
         console.log(`${plugins.length} plugins will be ignored according to the rules configuration`);
+        console.log(`starting alert filtering for the current report!`);
         currentReport = await actionHelper.filterReport(currentReport, plugins);
 
+        // Update the newly filtered report
+        fs.writeFileSync(`${workSpace}/${zapWorkDir}/${jsonReportName}`, currentReport);
         // if (previousReport !== undefined) {
+        //     console.log(`starting alert filtering for the previous report!`);
         //     previousReport = await actionHelper.filterReport(previousReport, plugins);
         // }
     }
@@ -163,8 +167,18 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
     let runnerInfo = `RunnerID:${currentRunnerID}`;
 
     if (create_new_issue) {
-        let res = await createNewIssue(workSpace, currentReport, runnerInfo);
+
+        let msg = actionHelper.createMessage(currentReport['site'], runnerInfo);
+        const newIssue = await octokit.issues.create({
+            owner: owner,
+            repo: repo,
+            title: 'ZAP Scan Baseline Report',
+            body: msg
+        });
+        console.log(`Process completed successfully and a a new issue #${newIssue.data.number} has been created for the ZAP Scan.`);
+
     } else {
+
         let siteClone = actionHelper.generateDifference(currentReport, previousReport);
         if (currentReport.updated) {
             console.log('The current report has changes compared to the previous report');
@@ -182,23 +196,9 @@ async function processReport(token, workSpace, branch, plugins, currentRunnerID)
             }catch (err) {
                 console.log(`Error occurred while updating the issue #${openIssue.number} with the latest ZAP scan: ${err}`)
             }
+
         } else {
             console.log('No changes have been observed from the previous scan and current scan!, exiting the program!')
         }
     }
-}
-
-
-async function createNewIssue(workSpace, jsonReport, runnerInfo) {
-    let msg = actionHelper.createMessage(jsonReport['site'], runnerInfo);
-
-    const newIssue = await octokit.issues.create({
-        owner: owner,
-        repo: repo,
-        title: 'ZAP Scan Baseline Report',
-        body: msg
-    });
-
-    console.log(`Created a new issue #${newIssue.data.number} for the ZAP Scan.`);
-    console.log(`Process completed successfully, and the new alerts have been reported in the issue ${newIssue.data.number}!`);
 }

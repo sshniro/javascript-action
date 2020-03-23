@@ -97,15 +97,22 @@ let actionHelper = {
             } else {
                 // deep clone the variable for further processing
                 let newSite = JSON.parse(JSON.stringify(newReportSite));
-                let alerts = newReportSite.alerts;
+                let currentAlerts = newReportSite.alerts;
                 let previousAlerts = previousSite[0].alerts;
 
-                let updatedAlerts = [];
-                let newAlerts = _.differenceBy(alerts, previousAlerts, 'pluginid');
-                let removedAlerts = _.differenceBy(previousAlerts, alerts, 'pluginid');
+                let newAlerts = _.differenceBy(currentAlerts, previousAlerts, 'pluginid');
+                let removedAlerts = _.differenceBy(previousAlerts, currentAlerts, 'pluginid');
+
+                let ignoredAlerts = [];
+                if (newReportSite.hasOwnProperty('ignoredAlerts') && previousSite[0].hasOwnProperty('ignoredAlerts')) {
+                    ignoredAlerts = _.differenceBy(newReportSite['ignoredAlerts'], previousSite[0]['ignoredAlerts'], 'pluginid');
+                }else if(newReportSite.hasOwnProperty('ignoredAlerts')){
+                    ignoredAlerts = newReportSite['ignoredAlerts']
+                }
 
                 newSite.alerts = newAlerts;
                 newSite.removedAlerts = removedAlerts;
+                newSite.ignoredAlerts = ignoredAlerts;
                 siteClone.push(newSite);
 
                 if (newAlerts.length !== 0 || removedAlerts.length !== 0) {
@@ -154,8 +161,8 @@ let actionHelper = {
     }),
 
 
-    readPreviousReport: (async (octokit, owner, repo, workSpace,runnerID) => {
-        let artifactList  = await octokit.actions.listWorkflowRunArtifacts({
+    readPreviousReport: (async (octokit, owner, repo, workSpace, runnerID) => {
+        let artifactList = await octokit.actions.listWorkflowRunArtifacts({
             owner: owner,
             repo: repo,
             run_id: runnerID
@@ -174,7 +181,7 @@ let actionHelper = {
         let download = await octokit.actions.downloadArtifact({
             owner: owner,
             repo: repo,
-            artifact_id : artifactID,
+            artifact_id: artifactID,
             archive_format: 'zip'
         });
 
@@ -189,7 +196,7 @@ let actionHelper = {
         let zipEntries = zip.getEntries();
 
         let previousReport;
-        await zipEntries.forEach(function(zipEntry) {
+        await zipEntries.forEach(function (zipEntry) {
             if (zipEntry.entryName === "report_json.json") {
                 previousReport = JSON.parse(zipEntry.getData().toString('utf8'));
             }
