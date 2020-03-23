@@ -71,14 +71,14 @@ run();
 
 async function processReport(token, workSpace, branch, plugins, currentRunnerID) {
 
+    let openIssue;
     let currentReport;
+    let previousRunnerID;
     let previousReport = {};
     let create_new_issue = false;
-    let openIssue;
-    let previousRunnerID;
 
     let issues = await octokit.search.issuesAndPullRequests({
-        q: `is:issue+:is:open+:state:open+repo:${owner}/${repo}+ZAP+Scan+Baseline+Report`,
+        q: `is:issue+:state:open+repo:${owner}/${repo}+ZAP+Scan+Baseline+Report`,
         sort: 'updated'
     });
 
