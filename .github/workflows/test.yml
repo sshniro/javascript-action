@@ -9,24 +9,16 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: master
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '10.x'
       - name: ZAP Scan
         uses: ./
         with:
           workspace: ${{ github.workspace }}
           token: ${{ secrets.GITHUB_TOKEN }}
           repo_name: ${{github.repository}}
-          zap_work_dir: '.zap'
-          branch: 'master'
-          report_name: 'report_md.md'
-          zap_conf_file_name: 'zap.yaml'
           docker_name: 'owasp/zap2docker-stable'
           target: 'https://www.example.com'
           rules_file_name: 'rules.tsv'
           github_run_id: ${{ github.run_id }}
-          github_run_number: ${{ github.run_number }}
       - uses: actions/upload-artifact@v1
         with:
           name: zap_scan

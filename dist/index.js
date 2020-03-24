@@ -2742,7 +2742,6 @@ async function run() {
         let workspace = core.getInput('workspace');
         let token = core.getInput('token');
         let repoName = core.getInput('repo_name');
-        let branch = core.getInput('branch');
         let docker_name = core.getInput('docker_name');
         let target = core.getInput('target');
         let rulesFileName = core.getInput('rules_file_name');
@@ -2779,7 +2778,7 @@ async function run() {
         } catch (err) {
             console.log('The ZAP Baseline scan has failed, starting to analyze the alerts. err: ' + err.toString());
         }
-        await processReport(token, workspace, branch, plugins, currentRunnerID);
+        await processReport(token, workspace, plugins, currentRunnerID);
     } catch (error) {
         core.setFailed(error.message);
     }
@@ -2788,7 +2787,7 @@ async function run() {
 // require('./dev-helper').fillEnvironmentVariables();
 run();
 
-async function processReport(token, workSpace, branch, plugins, currentRunnerID) {
+async function processReport(token, workSpace, plugins, currentRunnerID) {
 
     let openIssue;
     let currentReport;
