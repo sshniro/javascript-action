@@ -3750,6 +3750,7 @@ async function processReport(token, workSpace, plugins, currentRunnerID) {
         if (openIssue === undefined) {
             create_new_issue = true;
         }else {
+            console.log(`Ongoing open issue has been identified #${openIssue['number']}`);
             // If there is no comments then read the body
             if (openIssue['comments'] === 0) {
                 previousRunnerID = actionHelper.getRunnerID(openIssue['body']);
@@ -3804,6 +3805,7 @@ async function processReport(token, workSpace, plugins, currentRunnerID) {
         console.log('No new alerts have been identified by the ZAP Scan');
         if (openIssue != null && openIssue.state === 'open') {
             // close the issue with a comment
+            console.log(`Starting to close the issue #${openIssue.number}`);
             try{
                 await octokit.issues.createComment({
                     owner: owner,
@@ -3817,7 +3819,7 @@ async function processReport(token, workSpace, plugins, currentRunnerID) {
                     issue_number: openIssue.number,
                     state: 'closed'
                 });
-                console.log(`No alerts have been found, closing the issue #${openIssue.number}`)
+                console.log(`Successfully closed the issue #${openIssue.number}`);
             }catch (err) {
                 console.log(`Error occurred while closing the issue with a comment! err: ${err}`)
             }
