@@ -42,7 +42,7 @@ async function run() {
         }
 
         let command = (`docker run --user root -v ${workspace}:/zap/wrk/:rw --network="host" ` +
-            `-t ${docker_name} zap-full-scan.py -t ${target} -g gen.conf -J ${jsonReportName} -w ${mdReportName}` -a);
+            `-t ${docker_name} zap-full-scan.py -t ${target} -g gen.conf -J ${jsonReportName} -w ${mdReportName} -a`);
 
         if (plugins.length !== 0) {
             command = command + ` -c ${rulesFileLocation}`
