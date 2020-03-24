@@ -234,8 +234,7 @@ let actionHelper = {
             continueOnError: true
         };
 
-        const uploadResult = await artifactClient.uploadArtifact(artifactName, files, rootDirectory, options)
-        console.log('The files have been uploaded successfully')
+        await artifactClient.uploadArtifact(artifactName, files, rootDirectory, options)
     })
 
 };
