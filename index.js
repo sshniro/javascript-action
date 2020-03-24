@@ -2,10 +2,6 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 const fs = require('fs');
 const github = require('@actions/github');
-const _ = require('lodash');
-const artifact = require('@actions/artifact');
-const artifactClient = artifact.create();
-const artifactName = 'zap_scan';
 
 const actionHelper = require('./action-helper');
 
@@ -46,7 +42,7 @@ async function run() {
         }
 
         let command = (`docker run --user root -v ${workspace}:/zap/wrk/:rw --network="host" ` +
-            `-t ${docker_name} zap-baseline.py -t ${target} -g gen.conf -J ${jsonReportName} -w ${mdReportName}`);
+            `-t ${docker_name} zap-full-scan.py -t ${target} -g gen.conf -J ${jsonReportName} -w ${mdReportName}` -a);
 
         if (plugins.length !== 0) {
             command = command + ` -c ${rulesFileLocation}`

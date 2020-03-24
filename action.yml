@@ -4,6 +4,12 @@ inputs:
   token:
     description: 'Github Token'
     required: true
+  target:
+    description: 'Target URL'
+    required: true
+  rules_file_name:
+    description: 'Location of the rules file'
+    required: false
   docker_name:
     description: 'The Docker file to be executed'
     required: true
