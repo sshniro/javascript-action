@@ -1,14 +1,8 @@
 name: 'ZAP Scan'
 description: 'Scans the web application with ZAP'
 inputs:
-  workspace:
-    description: 'workspace of the project'
-    required: true
   token:
     description: 'Github Token'
-    required: true
-  repo_name:
-    description: 'Git repo name (ownerName/repoName)'
     required: true
   docker_name:
     description: 'The Docker file to be executed'

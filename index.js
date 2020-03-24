@@ -3,6 +3,9 @@ const exec = require('@actions/exec');
 const fs = require('fs');
 const github = require('@actions/github');
 const _ = require('lodash');
+const artifact = require('@actions/artifact');
+const artifactClient = artifact.create();
+const artifactName = 'zap_scan';
 
 const actionHelper = require('./action-helper');
 
@@ -20,13 +23,13 @@ let zapWorkDir = '.zap';
 async function run() {
 
     try {
-        let workspace = core.getInput('workspace');
+        let workspace = process.env.GITHUB_WORKSPACE;
+        let currentRunnerID = process.env.GITHUB_RUN_ID;
+        let repoName = process.env.GITHUB_REPOSITORY;
         let token = core.getInput('token');
-        let repoName = core.getInput('repo_name');
         let docker_name = core.getInput('docker_name');
         let target = core.getInput('target');
         let rulesFileName = core.getInput('rules_file_name');
-        let currentRunnerID = core.getInput('github_run_id');
 
         console.log('starting the program');
         console.log('github run id :' + currentRunnerID);
@@ -220,4 +223,6 @@ async function processReport(token, workSpace, plugins, currentRunnerID) {
             console.log('No changes have been observed from the previous scan and current scan!, exiting the program!')
         }
     }
+
+    actionHelper.uploadArtifacts(workSpace, `${zapWorkDir}/${mdReportName}`, `${zapWorkDir}/${jsonReportName}`);
 }

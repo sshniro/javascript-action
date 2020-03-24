@@ -3,6 +3,7 @@ const _ = require('lodash');
 const readline = require('readline');
 const AdmZip = require('adm-zip');
 const request = require('request');
+const artifact = require('@actions/artifact');
 
 function createReadStreamSafe(filename, options) {
     return new Promise((resolve, reject) => {
@@ -174,49 +175,69 @@ let actionHelper = {
 
     readPreviousReport: (async (octokit, owner, repo, workSpace, runnerID) => {
         let previousReport;
-        let artifactList = await octokit.actions.listWorkflowRunArtifacts({
-            owner: owner,
-            repo: repo,
-            run_id: runnerID
-        });
-
-        let artifacts = artifactList.data.artifacts;
-        let artifactID;
-        if (artifacts.length !== 0) {
-            artifacts.forEach((a => {
-                if (a['name'] === 'zap_scan') {
-                    artifactID = a['id']
-                }
-            }));
-        }
-
-        if (artifactID !== undefined) {
-            let download = await octokit.actions.downloadArtifact({
+        try{
+            let artifactList = await octokit.actions.listWorkflowRunArtifacts({
                 owner: owner,
                 repo: repo,
-                artifact_id: artifactID,
-                archive_format: 'zip'
+                run_id: runnerID
             });
 
-            await new Promise(resolve =>
-                request(download.url)
-                    .pipe(fs.createWriteStream(`${workSpace}/zap_scan.zip`))
-                    .on('finish', () => {
-                        resolve();
-                    }));
+            let artifacts = artifactList.data.artifacts;
+            let artifactID;
+            if (artifacts.length !== 0) {
+                artifacts.forEach((a => {
+                    if (a['name'] === 'zap_scan') {
+                        artifactID = a['id']
+                    }
+                }));
+            }
 
-            let zip = new AdmZip(`${workSpace}/zap_scan.zip`);
-            let zipEntries = zip.getEntries();
+            if (artifactID !== undefined) {
+                let download = await octokit.actions.downloadArtifact({
+                    owner: owner,
+                    repo: repo,
+                    artifact_id: artifactID,
+                    archive_format: 'zip'
+                });
 
-            await zipEntries.forEach(function (zipEntry) {
-                if (zipEntry.entryName === "report_json.json") {
-                    previousReport = JSON.parse(zipEntry.getData().toString('utf8'));
-                }
-            });
+                await new Promise(resolve =>
+                    request(download.url)
+                        .pipe(fs.createWriteStream(`${workSpace}/zap_scan.zip`))
+                        .on('finish', () => {
+                            resolve();
+                        }));
+
+                let zip = new AdmZip(`${workSpace}/zap_scan.zip`);
+                let zipEntries = zip.getEntries();
+
+                await zipEntries.forEach(function (zipEntry) {
+                    if (zipEntry.entryName === "report_json.json") {
+                        previousReport = JSON.parse(zipEntry.getData().toString('utf8'));
+                    }
+                });
+            }
+        }catch (e) {
+            console.log(`Error occurred while downloading the artifacts!`)
         }
-
         return previousReport;
+    }),
+
+    uploadArtifacts: (async (rootDir, mdReport, jsonReport) => {
+        const artifactClient = artifact.create()
+        const artifactName = 'zap_scan';
+        const files = [
+            `${rootDir}/${mdReport}`,
+            `${rootDir}/${jsonReport}`,
+        ];
+        const rootDirectory = rootDir;
+        const options = {
+            continueOnError: true
+        };
+
+        const uploadResult = await artifactClient.uploadArtifact(artifactName, files, rootDirectory, options)
+        console.log('The files have been uploaded successfully')
     })
+
 };
 
 module.exports = actionHelper;

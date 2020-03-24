@@ -12,14 +12,7 @@ jobs:
       - name: ZAP Scan
         uses: ./
         with:
-          workspace: ${{ github.workspace }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          repo_name: ${{github.repository}}
           docker_name: 'owasp/zap2docker-stable'
           target: 'https://www.example.com'
           rules_file_name: 'rules.tsv'
-          github_run_id: ${{ github.run_id }}
-      - uses: actions/upload-artifact@v1
-        with:
-          name: zap_scan
-          path: ${{ github.workspace }}/.zap/
