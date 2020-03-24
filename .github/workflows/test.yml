@@ -6,11 +6,11 @@ jobs:
     name: Scan the webapplication
     steps:
       - name: Checkout
-        uses: ./
+        uses: actions/checkout@v2
         with:
           ref: master
       - name: ZAP Scan
-        uses: sshniro/javascript-action@v20
+        uses: ./
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           docker_name: 'owasp/zap2docker-stable'
