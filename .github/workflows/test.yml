@@ -3,10 +3,10 @@ on: [push]
 jobs:
   zap_scan:
     runs-on: ubuntu-latest
-    name: Scan the webapplication
+    name: Scan ZAProxy website
     steps:
       - name: ZAP Scan
-        uses: zaproxy/action-baseline@v1
+        uses: zaproxy/action-baseline@v0.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: 'https://www.zaproxy.org/'
