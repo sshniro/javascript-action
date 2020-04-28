@@ -14,17 +14,20 @@ let repo;
 // Default file names
 let jsonReportName = 'report_json.json';
 let mdReportName = 'report_md.md';
+let htmlReportName = 'report_html.html';
 
 async function run() {
 
     try {
         let workspace = process.env.GITHUB_WORKSPACE;
         let currentRunnerID = process.env.GITHUB_RUN_ID;
-        let repoName = process.env.GITHUB_REPOSITORY;
+        let repoName = 'sshniro/javascript-action';
         let token = core.getInput('token');
         let docker_name = core.getInput('docker_name');
         let target = core.getInput('target');
         let rulesFileLocation = core.getInput('rules_file_name');
+        let cmdOptions = core.getInput('cmd_options');
+        let include_urls = core.getInput('include_urls');
 
         console.log('starting the program');
         console.log('github run id :' + currentRunnerID);
@@ -36,13 +39,19 @@ async function run() {
         octokit = new github.GitHub(token);
         context = github.context;
 
+        let issueTitle = `ZAP Baseline Scan`
+        let issues = await octokit.search.issuesAndPullRequests({
+            q: encodeURI(`is:issue state:open repo:${owner}/${repo} ${issueTitle}`).replace(/%20/g,'+'),
+            sort: 'updated'
+        });
+
         let plugins = [];
         if (rulesFileLocation) {
             plugins = await actionHelper.processLineByLine(`${workspace}/${rulesFileLocation}`);
         }
 
         let command = (`docker run --user root -v ${workspace}:/zap/wrk/:rw --network="host" ` +
-            `-t ${docker_name} zap-full-scan.py -t ${target} -g gen.conf -J ${jsonReportName} -w ${mdReportName} -a`);
+            `-t ${docker_name} zap-full-scan.py -t ${target} -g gen.conf -J ${jsonReportName} -w ${mdReportName} -r ${htmlReportName} ${cmdOptions}`);
 
         if (plugins.length !== 0) {
             command = command + ` -c ${rulesFileLocation}`
@@ -53,13 +62,13 @@ async function run() {
         } catch (err) {
             console.log('The ZAP Baseline scan has failed, starting to analyze the alerts. err: ' + err.toString());
         }
-        await processReport(token, workspace, plugins, currentRunnerID);
+        await processReport(token, workspace, plugins, currentRunnerID, include_urls);
     } catch (error) {
         core.setFailed(error.message);
     }
 }
 
-// require('./dev-helper').fillEnvironmentVariables();
+require('./dev-helper').fillEnvironmentVariables();
 run();
 
 async function processReport(token, workSpace, plugins, currentRunnerID) {
@@ -87,7 +96,7 @@ async function processReport(token, workSpace, plugins, currentRunnerID) {
     if (issues.data.items.length === 0) {
         create_new_issue = true;
     }else {
-        // Sometimes search API returns recently closed issue as an open issue
+        // Sometimes search API returns recently closed issue as an open issue (search index not getting updated)
         for (let i = 0; i < issues.data.items.length; i++) {
             let issue = issues.data.items[i];
             if(issue['state'] === 'open' && issue['user']['login'] === 'github-actions[bot]'){
@@ -217,5 +226,5 @@ async function processReport(token, workSpace, plugins, currentRunnerID) {
         }
     }
 
-    actionHelper.uploadArtifacts(workSpace, `${mdReportName}`, `${jsonReportName}`);
+    actionHelper.uploadArtifacts(workSpace, mdReportName, jsonReportName, htmlReportName);
 }

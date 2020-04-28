@@ -54,12 +54,12 @@ let actionHelper = {
         let msg = '';
 
         sites.forEach((site => {
-            msg = msg + `${BULLET} Site[${site["@name"]}] ${NXT_LINE}`;
+            msg = msg + `${BULLET} Site: [${site["@name"]}](${site["@name"]}) ${NXT_LINE}`;
             if (site.hasOwnProperty('alerts')) {
                 if (site.alerts.length !== 0) {
                     msg = `${msg} ${TAB} **New Alerts** ${NXT_LINE}`;
                     site.alerts.forEach((alert) => {
-                        msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
+                        msg = msg + TAB + `${BULLET} **${alert.name}** [${alert.pluginid}] total: ${alert.instances.length}:  ${NXT_LINE}`
                     });
                     msg = msg + NXT_LINE
                 }
@@ -69,7 +69,7 @@ let actionHelper = {
                 if (site.removedAlerts.length !== 0) {
                     msg = `${msg} ${TAB} **Resolved Alerts** ${NXT_LINE}`;
                     site.removedAlerts.forEach((alert) => {
-                        msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
+                        msg = msg + TAB + `${BULLET} **${alert.name}** [${alert.pluginid}] total: ${alert.instances.length}:  ${NXT_LINE}`
                     });
                     msg = msg + NXT_LINE
                 }
@@ -79,7 +79,7 @@ let actionHelper = {
                 if (site.ignoredAlerts.length !== 0) {
                     msg = `${msg} ${TAB} **Ignored Alerts** ${NXT_LINE}`;
                     site.ignoredAlerts.forEach((alert) => {
-                        msg = msg + TAB + `${BULLET} Alert[${alert.pluginid}] count(${alert.instances.length}): ${alert.name} ${NXT_LINE}`
+                        msg = msg + TAB + `${BULLET} **${alert.name}** [${alert.pluginid}] total: ${alert.instances.length}:  ${NXT_LINE}`
                     });
                     msg = msg + NXT_LINE
                 }
@@ -222,12 +222,13 @@ let actionHelper = {
         return previousReport;
     }),
 
-    uploadArtifacts: (async (rootDir, mdReport, jsonReport) => {
-        const artifactClient = artifact.create()
+    uploadArtifacts: (async (rootDir, mdReport, jsonReport, htmlReport) => {
+        const artifactClient = artifact.create();
         const artifactName = 'zap_scan';
         const files = [
             `${rootDir}/${mdReport}`,
             `${rootDir}/${jsonReport}`,
+            `${rootDir}/${htmlReport}`,
         ];
         const rootDirectory = rootDir;
         const options = {
